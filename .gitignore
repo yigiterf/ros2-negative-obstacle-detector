@@ -1,0 +1,16 @@
+# AI Study & Mentorship Notes
+notes/
+.learning/
+*.study.md
+prompt_history/
+
+# ROS 2 / Gazebo build artifacts
+build/
+install/
+log/
+install_isolated/
+devel/
+
+# Python
+__pycache__/
+*.pyc

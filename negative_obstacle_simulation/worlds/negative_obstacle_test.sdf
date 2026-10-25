@@ -1,0 +1,1850 @@
+<?xml version="1.0" ?>
+<!--
+  Factory test world for the negative-obstacle detector.
+
+  Run:  gz sim -r negative_obstacle_test.sdf
+  Ground truth for every dimension: docs/detection-spec.md
+
+  Layout (top view, +x right, +y up):
+    - main aisle along x, y in [-2, 2]
+    - N1 narrow pit at (2.5, 0), N2 shallow pit at (-4.0, 4.5)
+    - N3 dock edge at x = 7.5, N4 ramp at x in [5.8, 7.5]
+    - O1 workbench, O2 conveyor, O3 low pipe
+    - storage racks at y = +/-6
+-->
+<sdf version="1.11">
+  <world name="factory_negative_obstacle">
+
+    <physics name="1ms" type="ignored">
+      <max_step_size>0.001</max_step_size>
+      <real_time_factor>1.0</real_time_factor>
+    </physics>
+
+    <gravity>0 0 -9.81</gravity>
+
+    <scene>
+      <ambient>0.38 0.40 0.43 1</ambient>
+      <background>0.70 0.79 0.88 1</background>
+      <shadows>true</shadows>
+    </scene>
+
+    <light type="directional" name="daylight">
+      <cast_shadows>true</cast_shadows>
+      <pose>0 0 12 0 0 0</pose>
+      <diffuse>1.00 0.98 0.92 1</diffuse>
+      <specular>0.25 0.25 0.25 1</specular>
+      <direction>-0.35 0.25 -0.90</direction>
+    </light>
+
+    <light type="point" name="high_bay_west">
+      <cast_shadows>false</cast_shadows>
+      <pose>-6 4 5.2 0 0 0</pose>
+      <diffuse>0.85 0.87 0.90 1</diffuse>
+      <specular>0.10 0.10 0.10 1</specular>
+      <attenuation>
+        <range>22</range>
+        <constant>0.60</constant>
+        <linear>0.02</linear>
+        <quadratic>0.001</quadratic>
+      </attenuation>
+    </light>
+
+    <light type="point" name="high_bay_east">
+      <cast_shadows>false</cast_shadows>
+      <pose>6 -3 5.2 0 0 0</pose>
+      <diffuse>0.85 0.87 0.90 1</diffuse>
+      <specular>0.10 0.10 0.10 1</specular>
+      <attenuation>
+        <range>22</range>
+        <constant>0.60</constant>
+        <linear>0.02</linear>
+        <quadratic>0.001</quadratic>
+      </attenuation>
+    </light>
+
+    <!--
+      Floor: seven coplanar slabs leave two rectangular openings. The slabs are
+      0.30 m thick so their vertical faces form the pit walls down to the pit
+      bottoms. Top surface is z = 0.
+    -->
+    <model name="factory_floor">
+      <static>true</static>
+      <pose>0 0 0 0 0 0</pose>
+      <link name="floor_link">
+
+        <collision name="band_south_collision">
+          <pose>0 -4.65 -0.15 0 0 0</pose>
+          <geometry><box><size>24 8.7 0.3</size></box></geometry>
+        </collision>
+        <visual name="band_south_visual">
+          <pose>0 -4.65 -0.15 0 0 0</pose>
+          <geometry><box><size>24 8.7 0.3</size></box></geometry>
+          <material>
+            <ambient>0.42 0.43 0.45 1</ambient>
+            <diffuse>0.55 0.56 0.58 1</diffuse>
+            <specular>0.05 0.05 0.05 1</specular>
+            <pbr><metal>
+              <roughness>0.92</roughness>
+              <metalness>0.0</metalness>
+            </metal></pbr>
+          </material>
+        </visual>
+
+        <collision name="band_n1_west_collision">
+          <pose>-4.90 0 -0.15 0 0 0</pose>
+          <geometry><box><size>14.2 0.6 0.3</size></box></geometry>
+        </collision>
+        <visual name="band_n1_west_visual">
+          <pose>-4.90 0 -0.15 0 0 0</pose>
+          <geometry><box><size>14.2 0.6 0.3</size></box></geometry>
+          <material>
+            <ambient>0.42 0.43 0.45 1</ambient>
+            <diffuse>0.55 0.56 0.58 1</diffuse>
+            <specular>0.05 0.05 0.05 1</specular>
+            <pbr><metal>
+              <roughness>0.92</roughness>
+              <metalness>0.0</metalness>
+            </metal></pbr>
+          </material>
+        </visual>
+
+        <collision name="band_n1_east_collision">
+          <pose>7.40 0 -0.15 0 0 0</pose>
+          <geometry><box><size>9.2 0.6 0.3</size></box></geometry>
+        </collision>
+        <visual name="band_n1_east_visual">
+          <pose>7.40 0 -0.15 0 0 0</pose>
+          <geometry><box><size>9.2 0.6 0.3</size></box></geometry>
+          <material>
+            <ambient>0.42 0.43 0.45 1</ambient>
+            <diffuse>0.55 0.56 0.58 1</diffuse>
+            <specular>0.05 0.05 0.05 1</specular>
+            <pbr><metal>
+              <roughness>0.92</roughness>
+              <metalness>0.0</metalness>
+            </metal></pbr>
+          </material>
+        </visual>
+
+        <collision name="band_middle_collision">
+          <pose>0 2.10 -0.15 0 0 0</pose>
+          <geometry><box><size>24 3.6 0.3</size></box></geometry>
+        </collision>
+        <visual name="band_middle_visual">
+          <pose>0 2.10 -0.15 0 0 0</pose>
+          <geometry><box><size>24 3.6 0.3</size></box></geometry>
+          <material>
+            <ambient>0.42 0.43 0.45 1</ambient>
+            <diffuse>0.55 0.56 0.58 1</diffuse>
+            <specular>0.05 0.05 0.05 1</specular>
+            <pbr><metal>
+              <roughness>0.92</roughness>
+              <metalness>0.0</metalness>
+            </metal></pbr>
+          </material>
+        </visual>
+
+        <collision name="band_n2_west_collision">
+          <pose>-8.30 4.50 -0.15 0 0 0</pose>
+          <geometry><box><size>7.4 1.2 0.3</size></box></geometry>
+        </collision>
+        <visual name="band_n2_west_visual">
+          <pose>-8.30 4.50 -0.15 0 0 0</pose>
+          <geometry><box><size>7.4 1.2 0.3</size></box></geometry>
+          <material>
+            <ambient>0.42 0.43 0.45 1</ambient>
+            <diffuse>0.55 0.56 0.58 1</diffuse>
+            <specular>0.05 0.05 0.05 1</specular>
+            <pbr><metal>
+              <roughness>0.92</roughness>
+              <metalness>0.0</metalness>
+            </metal></pbr>
+          </material>
+        </visual>
+
+        <collision name="band_n2_east_collision">
+          <pose>4.30 4.50 -0.15 0 0 0</pose>
+          <geometry><box><size>15.4 1.2 0.3</size></box></geometry>
+        </collision>
+        <visual name="band_n2_east_visual">
+          <pose>4.30 4.50 -0.15 0 0 0</pose>
+          <geometry><box><size>15.4 1.2 0.3</size></box></geometry>
+          <material>
+            <ambient>0.42 0.43 0.45 1</ambient>
+            <diffuse>0.55 0.56 0.58 1</diffuse>
+            <specular>0.05 0.05 0.05 1</specular>
+            <pbr><metal>
+              <roughness>0.92</roughness>
+              <metalness>0.0</metalness>
+            </metal></pbr>
+          </material>
+        </visual>
+
+        <collision name="band_north_collision">
+          <pose>0 7.05 -0.15 0 0 0</pose>
+          <geometry><box><size>24 3.9 0.3</size></box></geometry>
+        </collision>
+        <visual name="band_north_visual">
+          <pose>0 7.05 -0.15 0 0 0</pose>
+          <geometry><box><size>24 3.9 0.3</size></box></geometry>
+          <material>
+            <ambient>0.42 0.43 0.45 1</ambient>
+            <diffuse>0.55 0.56 0.58 1</diffuse>
+            <specular>0.05 0.05 0.05 1</specular>
+            <pbr><metal>
+              <roughness>0.92</roughness>
+              <metalness>0.0</metalness>
+            </metal></pbr>
+          </material>
+        </visual>
+
+        <collision name="pit_n1_bottom_collision">
+          <pose>2.50 0 -0.25 0 0 0</pose>
+          <geometry><box><size>0.6 0.6 0.1</size></box></geometry>
+        </collision>
+        <visual name="pit_n1_bottom_visual">
+          <pose>2.50 0 -0.25 0 0 0</pose>
+          <geometry><box><size>0.6 0.6 0.1</size></box></geometry>
+          <material>
+            <ambient>0.14 0.14 0.15 1</ambient>
+            <diffuse>0.18 0.18 0.19 1</diffuse>
+            <specular>0.02 0.02 0.02 1</specular>
+            <pbr><metal>
+              <roughness>0.95</roughness>
+              <metalness>0.0</metalness>
+            </metal></pbr>
+          </material>
+        </visual>
+
+        <collision name="pit_n2_bottom_collision">
+          <pose>-4.00 4.50 -0.20 0 0 0</pose>
+          <geometry><box><size>1.2 1.2 0.1</size></box></geometry>
+        </collision>
+        <visual name="pit_n2_bottom_visual">
+          <pose>-4.00 4.50 -0.20 0 0 0</pose>
+          <geometry><box><size>1.2 1.2 0.1</size></box></geometry>
+          <material>
+            <ambient>0.14 0.14 0.15 1</ambient>
+            <diffuse>0.18 0.18 0.19 1</diffuse>
+            <specular>0.02 0.02 0.02 1</specular>
+            <pbr><metal>
+              <roughness>0.95</roughness>
+              <metalness>0.0</metalness>
+            </metal></pbr>
+          </material>
+        </visual>
+
+      </link>
+    </model>
+
+    <!--
+      Floor markings: visual only, no collision. They sit 5 mm above the floor
+      and are used by the perception stack as landmarks during bring-up. They
+      must never be treated as obstacles.
+    -->
+    <model name="floor_markings">
+      <static>true</static>
+      <pose>0 0 0 0 0 0</pose>
+      <link name="markings_link">
+
+        <visual name="aisle_north">
+          <pose>0 2.00 0.005 0 0 0</pose>
+          <geometry><box><size>20 0.08 0.01</size></box></geometry>
+          <material>
+            <ambient>0.95 0.72 0.05 1</ambient>
+            <diffuse>1.00 0.78 0.05 1</diffuse>
+            <specular>0.10 0.10 0.10 1</specular>
+          </material>
+        </visual>
+        <visual name="aisle_south">
+          <pose>0 -2.00 0.005 0 0 0</pose>
+          <geometry><box><size>20 0.08 0.01</size></box></geometry>
+          <material>
+            <ambient>0.95 0.72 0.05 1</ambient>
+            <diffuse>1.00 0.78 0.05 1</diffuse>
+            <specular>0.10 0.10 0.10 1</specular>
+          </material>
+        </visual>
+        <visual name="cross_west">
+          <pose>-10.00 0 0.005 0 0 0</pose>
+          <geometry><box><size>0.08 4.0 0.01</size></box></geometry>
+          <material>
+            <ambient>0.95 0.72 0.05 1</ambient>
+            <diffuse>1.00 0.78 0.05 1</diffuse>
+            <specular>0.10 0.10 0.10 1</specular>
+          </material>
+        </visual>
+        <visual name="cross_east">
+          <pose>10.00 0 0.005 0 0 0</pose>
+          <geometry><box><size>0.08 4.0 0.01</size></box></geometry>
+          <material>
+            <ambient>0.95 0.72 0.05 1</ambient>
+            <diffuse>1.00 0.78 0.05 1</diffuse>
+            <specular>0.10 0.10 0.10 1</specular>
+          </material>
+        </visual>
+
+        <visual name="start_north">
+          <pose>0 0.50 0.005 0 0 0</pose>
+          <geometry><box><size>1.0 0.05 0.01</size></box></geometry>
+          <material>
+            <ambient>0.95 0.72 0.05 1</ambient>
+            <diffuse>1.00 0.78 0.05 1</diffuse>
+            <specular>0.10 0.10 0.10 1</specular>
+          </material>
+        </visual>
+        <visual name="start_south">
+          <pose>0 -0.50 0.005 0 0 0</pose>
+          <geometry><box><size>1.0 0.05 0.01</size></box></geometry>
+          <material>
+            <ambient>0.95 0.72 0.05 1</ambient>
+            <diffuse>1.00 0.78 0.05 1</diffuse>
+            <specular>0.10 0.10 0.10 1</specular>
+          </material>
+        </visual>
+        <visual name="start_west">
+          <pose>-0.50 0 0.005 0 0 0</pose>
+          <geometry><box><size>0.05 1.0 0.01</size></box></geometry>
+          <material>
+            <ambient>0.95 0.72 0.05 1</ambient>
+            <diffuse>1.00 0.78 0.05 1</diffuse>
+            <specular>0.10 0.10 0.10 1</specular>
+          </material>
+        </visual>
+        <visual name="start_east">
+          <pose>0.50 0 0.005 0 0 0</pose>
+          <geometry><box><size>0.05 1.0 0.01</size></box></geometry>
+          <material>
+            <ambient>0.95 0.72 0.05 1</ambient>
+            <diffuse>1.00 0.78 0.05 1</diffuse>
+            <specular>0.10 0.10 0.10 1</specular>
+          </material>
+        </visual>
+
+        <visual name="pit_n1_north">
+          <pose>2.50 0.325 0.005 0 0 0</pose>
+          <geometry><box><size>0.70 0.05 0.01</size></box></geometry>
+          <material>
+            <ambient>0.95 0.72 0.05 1</ambient>
+            <diffuse>1.00 0.78 0.05 1</diffuse>
+            <specular>0.10 0.10 0.10 1</specular>
+          </material>
+        </visual>
+        <visual name="pit_n1_south">
+          <pose>2.50 -0.325 0.005 0 0 0</pose>
+          <geometry><box><size>0.70 0.05 0.01</size></box></geometry>
+          <material>
+            <ambient>0.95 0.72 0.05 1</ambient>
+            <diffuse>1.00 0.78 0.05 1</diffuse>
+            <specular>0.10 0.10 0.10 1</specular>
+          </material>
+        </visual>
+        <visual name="pit_n1_west">
+          <pose>2.175 0 0.005 0 0 0</pose>
+          <geometry><box><size>0.05 0.60 0.01</size></box></geometry>
+          <material>
+            <ambient>0.95 0.72 0.05 1</ambient>
+            <diffuse>1.00 0.78 0.05 1</diffuse>
+            <specular>0.10 0.10 0.10 1</specular>
+          </material>
+        </visual>
+        <visual name="pit_n1_east">
+          <pose>2.825 0 0.005 0 0 0</pose>
+          <geometry><box><size>0.05 0.60 0.01</size></box></geometry>
+          <material>
+            <ambient>0.95 0.72 0.05 1</ambient>
+            <diffuse>1.00 0.78 0.05 1</diffuse>
+            <specular>0.10 0.10 0.10 1</specular>
+          </material>
+        </visual>
+
+        <visual name="pit_n2_north">
+          <pose>-4.00 5.125 0.005 0 0 0</pose>
+          <geometry><box><size>1.30 0.05 0.01</size></box></geometry>
+          <material>
+            <ambient>0.95 0.72 0.05 1</ambient>
+            <diffuse>1.00 0.78 0.05 1</diffuse>
+            <specular>0.10 0.10 0.10 1</specular>
+          </material>
+        </visual>
+        <visual name="pit_n2_south">
+          <pose>-4.00 3.875 0.005 0 0 0</pose>
+          <geometry><box><size>1.30 0.05 0.01</size></box></geometry>
+          <material>
+            <ambient>0.95 0.72 0.05 1</ambient>
+            <diffuse>1.00 0.78 0.05 1</diffuse>
+            <specular>0.10 0.10 0.10 1</specular>
+          </material>
+        </visual>
+        <visual name="pit_n2_west">
+          <pose>-4.625 4.50 0.005 0 0 0</pose>
+          <geometry><box><size>0.05 1.20 0.01</size></box></geometry>
+          <material>
+            <ambient>0.95 0.72 0.05 1</ambient>
+            <diffuse>1.00 0.78 0.05 1</diffuse>
+            <specular>0.10 0.10 0.10 1</specular>
+          </material>
+        </visual>
+        <visual name="pit_n2_east">
+          <pose>-3.375 4.50 0.005 0 0 0</pose>
+          <geometry><box><size>0.05 1.20 0.01</size></box></geometry>
+          <material>
+            <ambient>0.95 0.72 0.05 1</ambient>
+            <diffuse>1.00 0.78 0.05 1</diffuse>
+            <specular>0.10 0.10 0.10 1</specular>
+          </material>
+        </visual>
+
+        <visual name="dock_warning">
+          <pose>7.40 -6.00 0.005 0 0 0</pose>
+          <geometry><box><size>0.08 3.0 0.01</size></box></geometry>
+          <material>
+            <ambient>0.95 0.72 0.05 1</ambient>
+            <diffuse>1.00 0.78 0.05 1</diffuse>
+            <specular>0.10 0.10 0.10 1</specular>
+          </material>
+        </visual>
+        <visual name="ramp_warning">
+          <pose>5.70 -6.00 0.005 0 0 0</pose>
+          <geometry><box><size>0.08 2.0 0.01</size></box></geometry>
+          <material>
+            <ambient>0.95 0.72 0.05 1</ambient>
+            <diffuse>1.00 0.78 0.05 1</diffuse>
+            <specular>0.10 0.10 0.10 1</specular>
+          </material>
+        </visual>
+
+      </link>
+    </model>
+
+    <!-- Building shell: 24 x 18 m, open roof, 4.5 m door opening on +x wall. -->
+    <model name="factory_walls">
+      <static>true</static>
+      <pose>0 0 0 0 0 0</pose>
+      <link name="walls_link">
+
+        <collision name="wall_north_collision">
+          <pose>0 9.10 3.0 0 0 0</pose>
+          <geometry><box><size>24.4 0.2 6.0</size></box></geometry>
+        </collision>
+        <visual name="wall_north_visual">
+          <pose>0 9.10 3.0 0 0 0</pose>
+          <geometry><box><size>24.4 0.2 6.0</size></box></geometry>
+          <material>
+            <ambient>0.55 0.58 0.62 1</ambient>
+            <diffuse>0.66 0.69 0.73 1</diffuse>
+            <specular>0.10 0.10 0.10 1</specular>
+            <pbr><metal>
+              <roughness>0.85</roughness>
+              <metalness>0.0</metalness>
+            </metal></pbr>
+          </material>
+        </visual>
+
+        <collision name="wall_south_collision">
+          <pose>0 -9.10 3.0 0 0 0</pose>
+          <geometry><box><size>24.4 0.2 6.0</size></box></geometry>
+        </collision>
+        <visual name="wall_south_visual">
+          <pose>0 -9.10 3.0 0 0 0</pose>
+          <geometry><box><size>24.4 0.2 6.0</size></box></geometry>
+          <material>
+            <ambient>0.55 0.58 0.62 1</ambient>
+            <diffuse>0.66 0.69 0.73 1</diffuse>
+            <specular>0.10 0.10 0.10 1</specular>
+            <pbr><metal>
+              <roughness>0.85</roughness>
+              <metalness>0.0</metalness>
+            </metal></pbr>
+          </material>
+        </visual>
+
+        <collision name="wall_west_collision">
+          <pose>-12.10 0 3.0 0 0 0</pose>
+          <geometry><box><size>0.2 18.4 6.0</size></box></geometry>
+        </collision>
+        <visual name="wall_west_visual">
+          <pose>-12.10 0 3.0 0 0 0</pose>
+          <geometry><box><size>0.2 18.4 6.0</size></box></geometry>
+          <material>
+            <ambient>0.55 0.58 0.62 1</ambient>
+            <diffuse>0.66 0.69 0.73 1</diffuse>
+            <specular>0.10 0.10 0.10 1</specular>
+            <pbr><metal>
+              <roughness>0.85</roughness>
+              <metalness>0.0</metalness>
+            </metal></pbr>
+          </material>
+        </visual>
+
+        <collision name="wall_east_south_collision">
+          <pose>12.10 -5.60 3.0 0 0 0</pose>
+          <geometry><box><size>0.2 7.2 6.0</size></box></geometry>
+        </collision>
+        <visual name="wall_east_south_visual">
+          <pose>12.10 -5.60 3.0 0 0 0</pose>
+          <geometry><box><size>0.2 7.2 6.0</size></box></geometry>
+          <material>
+            <ambient>0.55 0.58 0.62 1</ambient>
+            <diffuse>0.66 0.69 0.73 1</diffuse>
+            <specular>0.10 0.10 0.10 1</specular>
+            <pbr><metal>
+              <roughness>0.85</roughness>
+              <metalness>0.0</metalness>
+            </metal></pbr>
+          </material>
+        </visual>
+
+        <collision name="wall_east_north_collision">
+          <pose>12.10 5.60 3.0 0 0 0</pose>
+          <geometry><box><size>0.2 7.2 6.0</size></box></geometry>
+        </collision>
+        <visual name="wall_east_north_visual">
+          <pose>12.10 5.60 3.0 0 0 0</pose>
+          <geometry><box><size>0.2 7.2 6.0</size></box></geometry>
+          <material>
+            <ambient>0.55 0.58 0.62 1</ambient>
+            <diffuse>0.66 0.69 0.73 1</diffuse>
+            <specular>0.10 0.10 0.10 1</specular>
+            <pbr><metal>
+              <roughness>0.85</roughness>
+              <metalness>0.0</metalness>
+            </metal></pbr>
+          </material>
+        </visual>
+
+        <collision name="wall_east_lintel_collision">
+          <pose>12.10 0 5.25 0 0 0</pose>
+          <geometry><box><size>0.2 4.0 1.5</size></box></geometry>
+        </collision>
+        <visual name="wall_east_lintel_visual">
+          <pose>12.10 0 5.25 0 0 0</pose>
+          <geometry><box><size>0.2 4.0 1.5</size></box></geometry>
+          <material>
+            <ambient>0.55 0.58 0.62 1</ambient>
+            <diffuse>0.66 0.69 0.73 1</diffuse>
+            <specular>0.10 0.10 0.10 1</specular>
+            <pbr><metal>
+              <roughness>0.85</roughness>
+              <metalness>0.0</metalness>
+            </metal></pbr>
+          </material>
+        </visual>
+
+        <collision name="baseboard_north_collision">
+          <pose>0 8.975 0.5 0 0 0</pose>
+          <geometry><box><size>24.0 0.05 1.0</size></box></geometry>
+        </collision>
+        <visual name="baseboard_north_visual">
+          <pose>0 8.975 0.5 0 0 0</pose>
+          <geometry><box><size>24.0 0.05 1.0</size></box></geometry>
+          <material>
+            <ambient>0.18 0.20 0.22 1</ambient>
+            <diffuse>0.22 0.24 0.27 1</diffuse>
+            <specular>0.05 0.05 0.05 1</specular>
+            <pbr><metal>
+              <roughness>0.80</roughness>
+              <metalness>0.0</metalness>
+            </metal></pbr>
+          </material>
+        </visual>
+
+        <collision name="baseboard_south_collision">
+          <pose>0 -8.975 0.5 0 0 0</pose>
+          <geometry><box><size>24.0 0.05 1.0</size></box></geometry>
+        </collision>
+        <visual name="baseboard_south_visual">
+          <pose>0 -8.975 0.5 0 0 0</pose>
+          <geometry><box><size>24.0 0.05 1.0</size></box></geometry>
+          <material>
+            <ambient>0.18 0.20 0.22 1</ambient>
+            <diffuse>0.22 0.24 0.27 1</diffuse>
+            <specular>0.05 0.05 0.05 1</specular>
+            <pbr><metal>
+              <roughness>0.80</roughness>
+              <metalness>0.0</metalness>
+            </metal></pbr>
+          </material>
+        </visual>
+
+        <collision name="baseboard_west_collision">
+          <pose>-11.975 0 0.5 0 0 0</pose>
+          <geometry><box><size>0.05 18.0 1.0</size></box></geometry>
+        </collision>
+        <visual name="baseboard_west_visual">
+          <pose>-11.975 0 0.5 0 0 0</pose>
+          <geometry><box><size>0.05 18.0 1.0</size></box></geometry>
+          <material>
+            <ambient>0.18 0.20 0.22 1</ambient>
+            <diffuse>0.22 0.24 0.27 1</diffuse>
+            <specular>0.05 0.05 0.05 1</specular>
+            <pbr><metal>
+              <roughness>0.80</roughness>
+              <metalness>0.0</metalness>
+            </metal></pbr>
+          </material>
+        </visual>
+
+        <collision name="baseboard_east_south_collision">
+          <pose>11.975 -5.50 0.5 0 0 0</pose>
+          <geometry><box><size>0.05 7.0 1.0</size></box></geometry>
+        </collision>
+        <visual name="baseboard_east_south_visual">
+          <pose>11.975 -5.50 0.5 0 0 0</pose>
+          <geometry><box><size>0.05 7.0 1.0</size></box></geometry>
+          <material>
+            <ambient>0.18 0.20 0.22 1</ambient>
+            <diffuse>0.22 0.24 0.27 1</diffuse>
+            <specular>0.05 0.05 0.05 1</specular>
+            <pbr><metal>
+              <roughness>0.80</roughness>
+              <metalness>0.0</metalness>
+            </metal></pbr>
+          </material>
+        </visual>
+
+        <collision name="baseboard_east_north_collision">
+          <pose>11.975 5.50 0.5 0 0 0</pose>
+          <geometry><box><size>0.05 7.0 1.0</size></box></geometry>
+        </collision>
+        <visual name="baseboard_east_north_visual">
+          <pose>11.975 5.50 0.5 0 0 0</pose>
+          <geometry><box><size>0.05 7.0 1.0</size></box></geometry>
+          <material>
+            <ambient>0.18 0.20 0.22 1</ambient>
+            <diffuse>0.22 0.24 0.27 1</diffuse>
+            <specular>0.05 0.05 0.05 1</specular>
+            <pbr><metal>
+              <roughness>0.80</roughness>
+              <metalness>0.0</metalness>
+            </metal></pbr>
+          </material>
+        </visual>
+
+        <collision name="door_post_south_collision">
+          <pose>11.95 -2.00 2.25 0 0 0</pose>
+          <geometry><box><size>0.15 0.15 4.5</size></box></geometry>
+        </collision>
+        <visual name="door_post_south_visual">
+          <pose>11.95 -2.00 2.25 0 0 0</pose>
+          <geometry><box><size>0.15 0.15 4.5</size></box></geometry>
+          <material>
+            <ambient>0.95 0.72 0.05 1</ambient>
+            <diffuse>1.00 0.78 0.05 1</diffuse>
+            <specular>0.10 0.10 0.10 1</specular>
+          </material>
+        </visual>
+
+        <collision name="door_post_north_collision">
+          <pose>11.95 2.00 2.25 0 0 0</pose>
+          <geometry><box><size>0.15 0.15 4.5</size></box></geometry>
+        </collision>
+        <visual name="door_post_north_visual">
+          <pose>11.95 2.00 2.25 0 0 0</pose>
+          <geometry><box><size>0.15 0.15 4.5</size></box></geometry>
+          <material>
+            <ambient>0.95 0.72 0.05 1</ambient>
+            <diffuse>1.00 0.78 0.05 1</diffuse>
+            <specular>0.10 0.10 0.10 1</specular>
+          </material>
+        </visual>
+
+        <collision name="door_lintel_collision">
+          <pose>11.95 0 4.50 0 0 0</pose>
+          <geometry><box><size>0.15 4.15 0.15</size></box></geometry>
+        </collision>
+        <visual name="door_lintel_visual">
+          <pose>11.95 0 4.50 0 0 0</pose>
+          <geometry><box><size>0.15 4.15 0.15</size></box></geometry>
+          <material>
+            <ambient>0.95 0.72 0.05 1</ambient>
+            <diffuse>1.00 0.78 0.05 1</diffuse>
+            <specular>0.10 0.10 0.10 1</specular>
+          </material>
+        </visual>
+
+      </link>
+    </model>
+
+    <!-- Roof beams at 5.5 m. They also anchor the low-pipe hangers. -->
+    <model name="roof_beams">
+      <static>true</static>
+      <pose>0 0 0 0 0 0</pose>
+      <link name="beams_link">
+        <collision name="beam_west_collision">
+          <pose>-8 0 5.50 0 0 0</pose>
+          <geometry><box><size>0.15 18.4 0.2</size></box></geometry>
+        </collision>
+        <visual name="beam_west_visual">
+          <pose>-8 0 5.50 0 0 0</pose>
+          <geometry><box><size>0.15 18.4 0.2</size></box></geometry>
+          <material>
+            <ambient>0.20 0.21 0.23 1</ambient>
+            <diffuse>0.28 0.29 0.31 1</diffuse>
+            <specular>0.20 0.20 0.20 1</specular>
+            <pbr><metal>
+              <roughness>0.50</roughness>
+              <metalness>0.60</metalness>
+            </metal></pbr>
+          </material>
+        </visual>
+
+        <collision name="beam_mid_west_collision">
+          <pose>-4 0 5.50 0 0 0</pose>
+          <geometry><box><size>0.15 18.4 0.2</size></box></geometry>
+        </collision>
+        <visual name="beam_mid_west_visual">
+          <pose>-4 0 5.50 0 0 0</pose>
+          <geometry><box><size>0.15 18.4 0.2</size></box></geometry>
+          <material>
+            <ambient>0.20 0.21 0.23 1</ambient>
+            <diffuse>0.28 0.29 0.31 1</diffuse>
+            <specular>0.20 0.20 0.20 1</specular>
+            <pbr><metal>
+              <roughness>0.50</roughness>
+              <metalness>0.60</metalness>
+            </metal></pbr>
+          </material>
+        </visual>
+
+        <collision name="beam_centre_collision">
+          <pose>0 0 5.50 0 0 0</pose>
+          <geometry><box><size>0.15 18.4 0.2</size></box></geometry>
+        </collision>
+        <visual name="beam_centre_visual">
+          <pose>0 0 5.50 0 0 0</pose>
+          <geometry><box><size>0.15 18.4 0.2</size></box></geometry>
+          <material>
+            <ambient>0.20 0.21 0.23 1</ambient>
+            <diffuse>0.28 0.29 0.31 1</diffuse>
+            <specular>0.20 0.20 0.20 1</specular>
+            <pbr><metal>
+              <roughness>0.50</roughness>
+              <metalness>0.60</metalness>
+            </metal></pbr>
+          </material>
+        </visual>
+
+        <collision name="beam_mid_east_collision">
+          <pose>4 0 5.50 0 0 0</pose>
+          <geometry><box><size>0.15 18.4 0.2</size></box></geometry>
+        </collision>
+        <visual name="beam_mid_east_visual">
+          <pose>4 0 5.50 0 0 0</pose>
+          <geometry><box><size>0.15 18.4 0.2</size></box></geometry>
+          <material>
+            <ambient>0.20 0.21 0.23 1</ambient>
+            <diffuse>0.28 0.29 0.31 1</diffuse>
+            <specular>0.20 0.20 0.20 1</specular>
+            <pbr><metal>
+              <roughness>0.50</roughness>
+              <metalness>0.60</metalness>
+            </metal></pbr>
+          </material>
+        </visual>
+
+        <collision name="beam_east_collision">
+          <pose>8 0 5.50 0 0 0</pose>
+          <geometry><box><size>0.15 18.4 0.2</size></box></geometry>
+        </collision>
+        <visual name="beam_east_visual">
+          <pose>8 0 5.50 0 0 0</pose>
+          <geometry><box><size>0.15 18.4 0.2</size></box></geometry>
+          <material>
+            <ambient>0.20 0.21 0.23 1</ambient>
+            <diffuse>0.28 0.29 0.31 1</diffuse>
+            <specular>0.20 0.20 0.20 1</specular>
+            <pbr><metal>
+              <roughness>0.50</roughness>
+              <metalness>0.60</metalness>
+            </metal></pbr>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <!--
+      Storage racks: 2.4 x 1.0 x 3.0 m, three shelves at 0.5 / 1.5 / 2.5 m.
+      Uprights are 8 x 8 cm. Cartons sit on the shelves; they are positive
+      obstacles and act as false-positive controls for the ground segmenter.
+    -->
+    <model name="rack_north_west">
+      <static>true</static>
+      <pose>-6 6 0 0 0 0</pose>
+      <link name="rack_link">
+
+        <collision name="upright_nw_collision">
+          <pose>-1.16 0.46 1.5 0 0 0</pose>
+          <geometry><box><size>0.08 0.08 3.0</size></box></geometry>
+        </collision>
+        <visual name="upright_nw_visual">
+          <pose>-1.16 0.46 1.5 0 0 0</pose>
+          <geometry><box><size>0.08 0.08 3.0</size></box></geometry>
+          <material><ambient>0.85 0.38 0.06 1</ambient><diffuse>0.90 0.43 0.08 1</diffuse></material>
+        </visual>
+
+        <collision name="upright_ne_collision">
+          <pose>1.16 0.46 1.5 0 0 0</pose>
+          <geometry><box><size>0.08 0.08 3.0</size></box></geometry>
+        </collision>
+        <visual name="upright_ne_visual">
+          <pose>1.16 0.46 1.5 0 0 0</pose>
+          <geometry><box><size>0.08 0.08 3.0</size></box></geometry>
+          <material><ambient>0.85 0.38 0.06 1</ambient><diffuse>0.90 0.43 0.08 1</diffuse></material>
+        </visual>
+
+        <collision name="upright_sw_collision">
+          <pose>-1.16 -0.46 1.5 0 0 0</pose>
+          <geometry><box><size>0.08 0.08 3.0</size></box></geometry>
+        </collision>
+        <visual name="upright_sw_visual">
+          <pose>-1.16 -0.46 1.5 0 0 0</pose>
+          <geometry><box><size>0.08 0.08 3.0</size></box></geometry>
+          <material><ambient>0.85 0.38 0.06 1</ambient><diffuse>0.90 0.43 0.08 1</diffuse></material>
+        </visual>
+
+        <collision name="upright_se_collision">
+          <pose>1.16 -0.46 1.5 0 0 0</pose>
+          <geometry><box><size>0.08 0.08 3.0</size></box></geometry>
+        </collision>
+        <visual name="upright_se_visual">
+          <pose>1.16 -0.46 1.5 0 0 0</pose>
+          <geometry><box><size>0.08 0.08 3.0</size></box></geometry>
+          <material><ambient>0.85 0.38 0.06 1</ambient><diffuse>0.90 0.43 0.08 1</diffuse></material>
+        </visual>
+
+        <collision name="shelf_low_collision">
+          <pose>0 0 0.50 0 0 0</pose>
+          <geometry><box><size>2.4 1.0 0.06</size></box></geometry>
+        </collision>
+        <visual name="shelf_low_visual">
+          <pose>0 0 0.50 0 0 0</pose>
+          <geometry><box><size>2.4 1.0 0.06</size></box></geometry>
+          <material><ambient>0.10 0.22 0.42 1</ambient><diffuse>0.12 0.26 0.50 1</diffuse></material>
+        </visual>
+
+        <collision name="shelf_mid_collision">
+          <pose>0 0 1.50 0 0 0</pose>
+          <geometry><box><size>2.4 1.0 0.06</size></box></geometry>
+        </collision>
+        <visual name="shelf_mid_visual">
+          <pose>0 0 1.50 0 0 0</pose>
+          <geometry><box><size>2.4 1.0 0.06</size></box></geometry>
+          <material><ambient>0.10 0.22 0.42 1</ambient><diffuse>0.12 0.26 0.50 1</diffuse></material>
+        </visual>
+
+        <collision name="shelf_high_collision">
+          <pose>0 0 2.50 0 0 0</pose>
+          <geometry><box><size>2.4 1.0 0.06</size></box></geometry>
+        </collision>
+        <visual name="shelf_high_visual">
+          <pose>0 0 2.50 0 0 0</pose>
+          <geometry><box><size>2.4 1.0 0.06</size></box></geometry>
+          <material><ambient>0.10 0.22 0.42 1</ambient><diffuse>0.12 0.26 0.50 1</diffuse></material>
+        </visual>
+
+        <collision name="carton_low_collision">
+          <pose>-0.55 0 0.68 0 0 0</pose>
+          <geometry><box><size>0.50 0.40 0.30</size></box></geometry>
+        </collision>
+        <visual name="carton_low_visual">
+          <pose>-0.55 0 0.68 0 0 0</pose>
+          <geometry><box><size>0.50 0.40 0.30</size></box></geometry>
+          <material><ambient>0.52 0.40 0.26 1</ambient><diffuse>0.60 0.46 0.30 1</diffuse></material>
+        </visual>
+
+        <collision name="carton_mid_collision">
+          <pose>0.35 0 1.73 0 0 0</pose>
+          <geometry><box><size>0.50 0.50 0.40</size></box></geometry>
+        </collision>
+        <visual name="carton_mid_visual">
+          <pose>0.35 0 1.73 0 0 0</pose>
+          <geometry><box><size>0.50 0.50 0.40</size></box></geometry>
+          <material><ambient>0.52 0.40 0.26 1</ambient><diffuse>0.60 0.46 0.30 1</diffuse></material>
+        </visual>
+
+        <collision name="carton_high_collision">
+          <pose>-0.20 0 2.705 0 0 0</pose>
+          <geometry><box><size>0.45 0.45 0.35</size></box></geometry>
+        </collision>
+        <visual name="carton_high_visual">
+          <pose>-0.20 0 2.705 0 0 0</pose>
+          <geometry><box><size>0.45 0.45 0.35</size></box></geometry>
+          <material><ambient>0.52 0.40 0.26 1</ambient><diffuse>0.60 0.46 0.30 1</diffuse></material>
+        </visual>
+
+      </link>
+    </model>
+
+    <model name="rack_north_east">
+      <static>true</static>
+      <pose>0 6 0 0 0 0</pose>
+      <link name="rack_link">
+
+        <collision name="upright_nw_collision">
+          <pose>-1.16 0.46 1.5 0 0 0</pose>
+          <geometry><box><size>0.08 0.08 3.0</size></box></geometry>
+        </collision>
+        <visual name="upright_nw_visual">
+          <pose>-1.16 0.46 1.5 0 0 0</pose>
+          <geometry><box><size>0.08 0.08 3.0</size></box></geometry>
+          <material><ambient>0.85 0.38 0.06 1</ambient><diffuse>0.90 0.43 0.08 1</diffuse></material>
+        </visual>
+
+        <collision name="upright_ne_collision">
+          <pose>1.16 0.46 1.5 0 0 0</pose>
+          <geometry><box><size>0.08 0.08 3.0</size></box></geometry>
+        </collision>
+        <visual name="upright_ne_visual">
+          <pose>1.16 0.46 1.5 0 0 0</pose>
+          <geometry><box><size>0.08 0.08 3.0</size></box></geometry>
+          <material><ambient>0.85 0.38 0.06 1</ambient><diffuse>0.90 0.43 0.08 1</diffuse></material>
+        </visual>
+
+        <collision name="upright_sw_collision">
+          <pose>-1.16 -0.46 1.5 0 0 0</pose>
+          <geometry><box><size>0.08 0.08 3.0</size></box></geometry>
+        </collision>
+        <visual name="upright_sw_visual">
+          <pose>-1.16 -0.46 1.5 0 0 0</pose>
+          <geometry><box><size>0.08 0.08 3.0</size></box></geometry>
+          <material><ambient>0.85 0.38 0.06 1</ambient><diffuse>0.90 0.43 0.08 1</diffuse></material>
+        </visual>
+
+        <collision name="upright_se_collision">
+          <pose>1.16 -0.46 1.5 0 0 0</pose>
+          <geometry><box><size>0.08 0.08 3.0</size></box></geometry>
+        </collision>
+        <visual name="upright_se_visual">
+          <pose>1.16 -0.46 1.5 0 0 0</pose>
+          <geometry><box><size>0.08 0.08 3.0</size></box></geometry>
+          <material><ambient>0.85 0.38 0.06 1</ambient><diffuse>0.90 0.43 0.08 1</diffuse></material>
+        </visual>
+
+        <collision name="shelf_low_collision">
+          <pose>0 0 0.50 0 0 0</pose>
+          <geometry><box><size>2.4 1.0 0.06</size></box></geometry>
+        </collision>
+        <visual name="shelf_low_visual">
+          <pose>0 0 0.50 0 0 0</pose>
+          <geometry><box><size>2.4 1.0 0.06</size></box></geometry>
+          <material><ambient>0.10 0.22 0.42 1</ambient><diffuse>0.12 0.26 0.50 1</diffuse></material>
+        </visual>
+
+        <collision name="shelf_mid_collision">
+          <pose>0 0 1.50 0 0 0</pose>
+          <geometry><box><size>2.4 1.0 0.06</size></box></geometry>
+        </collision>
+        <visual name="shelf_mid_visual">
+          <pose>0 0 1.50 0 0 0</pose>
+          <geometry><box><size>2.4 1.0 0.06</size></box></geometry>
+          <material><ambient>0.10 0.22 0.42 1</ambient><diffuse>0.12 0.26 0.50 1</diffuse></material>
+        </visual>
+
+        <collision name="shelf_high_collision">
+          <pose>0 0 2.50 0 0 0</pose>
+          <geometry><box><size>2.4 1.0 0.06</size></box></geometry>
+        </collision>
+        <visual name="shelf_high_visual">
+          <pose>0 0 2.50 0 0 0</pose>
+          <geometry><box><size>2.4 1.0 0.06</size></box></geometry>
+          <material><ambient>0.10 0.22 0.42 1</ambient><diffuse>0.12 0.26 0.50 1</diffuse></material>
+        </visual>
+
+        <collision name="carton_low_collision">
+          <pose>-0.55 0 0.68 0 0 0</pose>
+          <geometry><box><size>0.50 0.40 0.30</size></box></geometry>
+        </collision>
+        <visual name="carton_low_visual">
+          <pose>-0.55 0 0.68 0 0 0</pose>
+          <geometry><box><size>0.50 0.40 0.30</size></box></geometry>
+          <material><ambient>0.52 0.40 0.26 1</ambient><diffuse>0.60 0.46 0.30 1</diffuse></material>
+        </visual>
+
+        <collision name="carton_mid_collision">
+          <pose>0.35 0 1.73 0 0 0</pose>
+          <geometry><box><size>0.50 0.50 0.40</size></box></geometry>
+        </collision>
+        <visual name="carton_mid_visual">
+          <pose>0.35 0 1.73 0 0 0</pose>
+          <geometry><box><size>0.50 0.50 0.40</size></box></geometry>
+          <material><ambient>0.52 0.40 0.26 1</ambient><diffuse>0.60 0.46 0.30 1</diffuse></material>
+        </visual>
+
+        <collision name="carton_high_collision">
+          <pose>-0.20 0 2.705 0 0 0</pose>
+          <geometry><box><size>0.45 0.45 0.35</size></box></geometry>
+        </collision>
+        <visual name="carton_high_visual">
+          <pose>-0.20 0 2.705 0 0 0</pose>
+          <geometry><box><size>0.45 0.45 0.35</size></box></geometry>
+          <material><ambient>0.52 0.40 0.26 1</ambient><diffuse>0.60 0.46 0.30 1</diffuse></material>
+        </visual>
+
+      </link>
+    </model>
+
+    <model name="rack_south_west">
+      <static>true</static>
+      <pose>-6 -6 0 0 0 0</pose>
+      <link name="rack_link">
+
+        <collision name="upright_nw_collision">
+          <pose>-1.16 0.46 1.5 0 0 0</pose>
+          <geometry><box><size>0.08 0.08 3.0</size></box></geometry>
+        </collision>
+        <visual name="upright_nw_visual">
+          <pose>-1.16 0.46 1.5 0 0 0</pose>
+          <geometry><box><size>0.08 0.08 3.0</size></box></geometry>
+          <material><ambient>0.85 0.38 0.06 1</ambient><diffuse>0.90 0.43 0.08 1</diffuse></material>
+        </visual>
+
+        <collision name="upright_ne_collision">
+          <pose>1.16 0.46 1.5 0 0 0</pose>
+          <geometry><box><size>0.08 0.08 3.0</size></box></geometry>
+        </collision>
+        <visual name="upright_ne_visual">
+          <pose>1.16 0.46 1.5 0 0 0</pose>
+          <geometry><box><size>0.08 0.08 3.0</size></box></geometry>
+          <material><ambient>0.85 0.38 0.06 1</ambient><diffuse>0.90 0.43 0.08 1</diffuse></material>
+        </visual>
+
+        <collision name="upright_sw_collision">
+          <pose>-1.16 -0.46 1.5 0 0 0</pose>
+          <geometry><box><size>0.08 0.08 3.0</size></box></geometry>
+        </collision>
+        <visual name="upright_sw_visual">
+          <pose>-1.16 -0.46 1.5 0 0 0</pose>
+          <geometry><box><size>0.08 0.08 3.0</size></box></geometry>
+          <material><ambient>0.85 0.38 0.06 1</ambient><diffuse>0.90 0.43 0.08 1</diffuse></material>
+        </visual>
+
+        <collision name="upright_se_collision">
+          <pose>1.16 -0.46 1.5 0 0 0</pose>
+          <geometry><box><size>0.08 0.08 3.0</size></box></geometry>
+        </collision>
+        <visual name="upright_se_visual">
+          <pose>1.16 -0.46 1.5 0 0 0</pose>
+          <geometry><box><size>0.08 0.08 3.0</size></box></geometry>
+          <material><ambient>0.85 0.38 0.06 1</ambient><diffuse>0.90 0.43 0.08 1</diffuse></material>
+        </visual>
+
+        <collision name="shelf_low_collision">
+          <pose>0 0 0.50 0 0 0</pose>
+          <geometry><box><size>2.4 1.0 0.06</size></box></geometry>
+        </collision>
+        <visual name="shelf_low_visual">
+          <pose>0 0 0.50 0 0 0</pose>
+          <geometry><box><size>2.4 1.0 0.06</size></box></geometry>
+          <material><ambient>0.10 0.22 0.42 1</ambient><diffuse>0.12 0.26 0.50 1</diffuse></material>
+        </visual>
+
+        <collision name="shelf_mid_collision">
+          <pose>0 0 1.50 0 0 0</pose>
+          <geometry><box><size>2.4 1.0 0.06</size></box></geometry>
+        </collision>
+        <visual name="shelf_mid_visual">
+          <pose>0 0 1.50 0 0 0</pose>
+          <geometry><box><size>2.4 1.0 0.06</size></box></geometry>
+          <material><ambient>0.10 0.22 0.42 1</ambient><diffuse>0.12 0.26 0.50 1</diffuse></material>
+        </visual>
+
+        <collision name="shelf_high_collision">
+          <pose>0 0 2.50 0 0 0</pose>
+          <geometry><box><size>2.4 1.0 0.06</size></box></geometry>
+        </collision>
+        <visual name="shelf_high_visual">
+          <pose>0 0 2.50 0 0 0</pose>
+          <geometry><box><size>2.4 1.0 0.06</size></box></geometry>
+          <material><ambient>0.10 0.22 0.42 1</ambient><diffuse>0.12 0.26 0.50 1</diffuse></material>
+        </visual>
+
+        <collision name="carton_low_collision">
+          <pose>-0.55 0 0.68 0 0 0</pose>
+          <geometry><box><size>0.50 0.40 0.30</size></box></geometry>
+        </collision>
+        <visual name="carton_low_visual">
+          <pose>-0.55 0 0.68 0 0 0</pose>
+          <geometry><box><size>0.50 0.40 0.30</size></box></geometry>
+          <material><ambient>0.52 0.40 0.26 1</ambient><diffuse>0.60 0.46 0.30 1</diffuse></material>
+        </visual>
+
+        <collision name="carton_mid_collision">
+          <pose>0.35 0 1.73 0 0 0</pose>
+          <geometry><box><size>0.50 0.50 0.40</size></box></geometry>
+        </collision>
+        <visual name="carton_mid_visual">
+          <pose>0.35 0 1.73 0 0 0</pose>
+          <geometry><box><size>0.50 0.50 0.40</size></box></geometry>
+          <material><ambient>0.52 0.40 0.26 1</ambient><diffuse>0.60 0.46 0.30 1</diffuse></material>
+        </visual>
+
+        <collision name="carton_high_collision">
+          <pose>-0.20 0 2.705 0 0 0</pose>
+          <geometry><box><size>0.45 0.45 0.35</size></box></geometry>
+        </collision>
+        <visual name="carton_high_visual">
+          <pose>-0.20 0 2.705 0 0 0</pose>
+          <geometry><box><size>0.45 0.45 0.35</size></box></geometry>
+          <material><ambient>0.52 0.40 0.26 1</ambient><diffuse>0.60 0.46 0.30 1</diffuse></material>
+        </visual>
+
+      </link>
+    </model>
+
+    <model name="rack_south_east">
+      <static>true</static>
+      <pose>0 -6 0 0 0 0</pose>
+      <link name="rack_link">
+
+        <collision name="upright_nw_collision">
+          <pose>-1.16 0.46 1.5 0 0 0</pose>
+          <geometry><box><size>0.08 0.08 3.0</size></box></geometry>
+        </collision>
+        <visual name="upright_nw_visual">
+          <pose>-1.16 0.46 1.5 0 0 0</pose>
+          <geometry><box><size>0.08 0.08 3.0</size></box></geometry>
+          <material><ambient>0.85 0.38 0.06 1</ambient><diffuse>0.90 0.43 0.08 1</diffuse></material>
+        </visual>
+
+        <collision name="upright_ne_collision">
+          <pose>1.16 0.46 1.5 0 0 0</pose>
+          <geometry><box><size>0.08 0.08 3.0</size></box></geometry>
+        </collision>
+        <visual name="upright_ne_visual">
+          <pose>1.16 0.46 1.5 0 0 0</pose>
+          <geometry><box><size>0.08 0.08 3.0</size></box></geometry>
+          <material><ambient>0.85 0.38 0.06 1</ambient><diffuse>0.90 0.43 0.08 1</diffuse></material>
+        </visual>
+
+        <collision name="upright_sw_collision">
+          <pose>-1.16 -0.46 1.5 0 0 0</pose>
+          <geometry><box><size>0.08 0.08 3.0</size></box></geometry>
+        </collision>
+        <visual name="upright_sw_visual">
+          <pose>-1.16 -0.46 1.5 0 0 0</pose>
+          <geometry><box><size>0.08 0.08 3.0</size></box></geometry>
+          <material><ambient>0.85 0.38 0.06 1</ambient><diffuse>0.90 0.43 0.08 1</diffuse></material>
+        </visual>
+
+        <collision name="upright_se_collision">
+          <pose>1.16 -0.46 1.5 0 0 0</pose>
+          <geometry><box><size>0.08 0.08 3.0</size></box></geometry>
+        </collision>
+        <visual name="upright_se_visual">
+          <pose>1.16 -0.46 1.5 0 0 0</pose>
+          <geometry><box><size>0.08 0.08 3.0</size></box></geometry>
+          <material><ambient>0.85 0.38 0.06 1</ambient><diffuse>0.90 0.43 0.08 1</diffuse></material>
+        </visual>
+
+        <collision name="shelf_low_collision">
+          <pose>0 0 0.50 0 0 0</pose>
+          <geometry><box><size>2.4 1.0 0.06</size></box></geometry>
+        </collision>
+        <visual name="shelf_low_visual">
+          <pose>0 0 0.50 0 0 0</pose>
+          <geometry><box><size>2.4 1.0 0.06</size></box></geometry>
+          <material><ambient>0.10 0.22 0.42 1</ambient><diffuse>0.12 0.26 0.50 1</diffuse></material>
+        </visual>
+
+        <collision name="shelf_mid_collision">
+          <pose>0 0 1.50 0 0 0</pose>
+          <geometry><box><size>2.4 1.0 0.06</size></box></geometry>
+        </collision>
+        <visual name="shelf_mid_visual">
+          <pose>0 0 1.50 0 0 0</pose>
+          <geometry><box><size>2.4 1.0 0.06</size></box></geometry>
+          <material><ambient>0.10 0.22 0.42 1</ambient><diffuse>0.12 0.26 0.50 1</diffuse></material>
+        </visual>
+
+        <collision name="shelf_high_collision">
+          <pose>0 0 2.50 0 0 0</pose>
+          <geometry><box><size>2.4 1.0 0.06</size></box></geometry>
+        </collision>
+        <visual name="shelf_high_visual">
+          <pose>0 0 2.50 0 0 0</pose>
+          <geometry><box><size>2.4 1.0 0.06</size></box></geometry>
+          <material><ambient>0.10 0.22 0.42 1</ambient><diffuse>0.12 0.26 0.50 1</diffuse></material>
+        </visual>
+
+        <collision name="carton_low_collision">
+          <pose>-0.55 0 0.68 0 0 0</pose>
+          <geometry><box><size>0.50 0.40 0.30</size></box></geometry>
+        </collision>
+        <visual name="carton_low_visual">
+          <pose>-0.55 0 0.68 0 0 0</pose>
+          <geometry><box><size>0.50 0.40 0.30</size></box></geometry>
+          <material><ambient>0.52 0.40 0.26 1</ambient><diffuse>0.60 0.46 0.30 1</diffuse></material>
+        </visual>
+
+        <collision name="carton_mid_collision">
+          <pose>0.35 0 1.73 0 0 0</pose>
+          <geometry><box><size>0.50 0.50 0.40</size></box></geometry>
+        </collision>
+        <visual name="carton_mid_visual">
+          <pose>0.35 0 1.73 0 0 0</pose>
+          <geometry><box><size>0.50 0.50 0.40</size></box></geometry>
+          <material><ambient>0.52 0.40 0.26 1</ambient><diffuse>0.60 0.46 0.30 1</diffuse></material>
+        </visual>
+
+        <collision name="carton_high_collision">
+          <pose>-0.20 0 2.705 0 0 0</pose>
+          <geometry><box><size>0.45 0.45 0.35</size></box></geometry>
+        </collision>
+        <visual name="carton_high_visual">
+          <pose>-0.20 0 2.705 0 0 0</pose>
+          <geometry><box><size>0.45 0.45 0.35</size></box></geometry>
+          <material><ambient>0.52 0.40 0.26 1</ambient><diffuse>0.60 0.46 0.30 1</diffuse></material>
+        </visual>
+
+      </link>
+    </model>
+
+    <!--
+      Material pallets. Pallet C sits on the loading-dock platform (z = 0.30 m).
+      Cartons on pallets are positive obstacles.
+    -->
+    <model name="pallet_stack_west">
+      <static>true</static>
+      <pose>-8.5 -6.5 0 0 0 0</pose>
+      <link name="pallet_link">
+        <collision name="base_collision">
+          <pose>0 0 0.07 0 0 0</pose>
+          <geometry><box><size>1.2 0.8 0.14</size></box></geometry>
+        </collision>
+        <visual name="base_visual">
+          <pose>0 0 0.07 0 0 0</pose>
+          <geometry><box><size>1.2 0.8 0.14</size></box></geometry>
+          <material><ambient>0.45 0.33 0.20 1</ambient><diffuse>0.52 0.38 0.22 1</diffuse></material>
+        </visual>
+        <collision name="carton_a_collision">
+          <pose>-0.25 0 0.34 0 0 0</pose>
+          <geometry><box><size>0.4 0.4 0.4</size></box></geometry>
+        </collision>
+        <visual name="carton_a_visual">
+          <pose>-0.25 0 0.34 0 0 0</pose>
+          <geometry><box><size>0.4 0.4 0.4</size></box></geometry>
+          <material><ambient>0.60 0.46 0.30 1</ambient><diffuse>0.68 0.52 0.36 1</diffuse></material>
+        </visual>
+        <collision name="carton_b_collision">
+          <pose>0.25 0 0.34 0 0 0</pose>
+          <geometry><box><size>0.4 0.4 0.4</size></box></geometry>
+        </collision>
+        <visual name="carton_b_visual">
+          <pose>0.25 0 0.34 0 0 0</pose>
+          <geometry><box><size>0.4 0.4 0.4</size></box></geometry>
+          <material><ambient>0.60 0.46 0.30 1</ambient><diffuse>0.68 0.52 0.36 1</diffuse></material>
+        </visual>
+        <collision name="carton_c_collision">
+          <pose>0.25 0 0.74 0 0 0</pose>
+          <geometry><box><size>0.4 0.4 0.4</size></box></geometry>
+        </collision>
+        <visual name="carton_c_visual">
+          <pose>0.25 0 0.74 0 0 0</pose>
+          <geometry><box><size>0.4 0.4 0.4</size></box></geometry>
+          <material><ambient>0.60 0.46 0.30 1</ambient><diffuse>0.68 0.52 0.36 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+
+    <model name="pallet_stack_east">
+      <static>true</static>
+      <pose>5.5 6.5 0 0 0 0</pose>
+      <link name="pallet_link">
+        <collision name="base_collision">
+          <pose>0 0 0.07 0 0 0</pose>
+          <geometry><box><size>1.2 0.8 0.14</size></box></geometry>
+        </collision>
+        <visual name="base_visual">
+          <pose>0 0 0.07 0 0 0</pose>
+          <geometry><box><size>1.2 0.8 0.14</size></box></geometry>
+          <material><ambient>0.45 0.33 0.20 1</ambient><diffuse>0.52 0.38 0.22 1</diffuse></material>
+        </visual>
+        <collision name="carton_top_collision">
+          <pose>0 0 0.54 0 0 0</pose>
+          <geometry><box><size>0.6 0.6 0.8</size></box></geometry>
+        </collision>
+        <visual name="carton_top_visual">
+          <pose>0 0 0.54 0 0 0</pose>
+          <geometry><box><size>0.6 0.6 0.8</size></box></geometry>
+          <material><ambient>0.60 0.46 0.30 1</ambient><diffuse>0.68 0.52 0.36 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+
+    <model name="pallet_stack_dock">
+      <static>true</static>
+      <pose>10.5 -6.5 0.30 0 0 0</pose>
+      <link name="pallet_link">
+        <collision name="base_collision">
+          <pose>0 0 0.07 0 0 0</pose>
+          <geometry><box><size>1.2 0.8 0.14</size></box></geometry>
+        </collision>
+        <visual name="base_visual">
+          <pose>0 0 0.07 0 0 0</pose>
+          <geometry><box><size>1.2 0.8 0.14</size></box></geometry>
+          <material><ambient>0.45 0.33 0.20 1</ambient><diffuse>0.52 0.38 0.22 1</diffuse></material>
+        </visual>
+        <collision name="carton_a_collision">
+          <pose>-0.25 0 0.34 0 0 0</pose>
+          <geometry><box><size>0.4 0.4 0.4</size></box></geometry>
+        </collision>
+        <visual name="carton_a_visual">
+          <pose>-0.25 0 0.34 0 0 0</pose>
+          <geometry><box><size>0.4 0.4 0.4</size></box></geometry>
+          <material><ambient>0.60 0.46 0.30 1</ambient><diffuse>0.68 0.52 0.36 1</diffuse></material>
+        </visual>
+        <collision name="carton_b_collision">
+          <pose>0.25 0 0.34 0 0 0</pose>
+          <geometry><box><size>0.4 0.4 0.4</size></box></geometry>
+        </collision>
+        <visual name="carton_b_visual">
+          <pose>0.25 0 0.34 0 0 0</pose>
+          <geometry><box><size>0.4 0.4 0.4</size></box></geometry>
+          <material><ambient>0.60 0.46 0.30 1</ambient><diffuse>0.68 0.52 0.36 1</diffuse></material>
+        </visual>
+        <collision name="carton_c_collision">
+          <pose>0.25 0 0.74 0 0 0</pose>
+          <geometry><box><size>0.4 0.4 0.4</size></box></geometry>
+        </collision>
+        <visual name="carton_c_visual">
+          <pose>0.25 0 0.74 0 0 0</pose>
+          <geometry><box><size>0.4 0.4 0.4</size></box></geometry>
+          <material><ambient>0.60 0.46 0.30 1</ambient><diffuse>0.68 0.52 0.36 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- Conveyor belt: top at 0.90 m, long edge runs across x. -->
+    <model name="conveyor">
+      <static>true</static>
+      <pose>-8 2.8 0 0 0 0</pose>
+      <link name="conveyor_link">
+
+        <collision name="belt_collision">
+          <pose>0 0 0.86 0 0 0</pose>
+          <geometry><box><size>4.0 0.7 0.08</size></box></geometry>
+        </collision>
+        <visual name="belt_visual">
+          <pose>0 0 0.86 0 0 0</pose>
+          <geometry><box><size>4.0 0.7 0.08</size></box></geometry>
+          <material><ambient>0.08 0.08 0.09 1</ambient><diffuse>0.10 0.10 0.11 1</diffuse></material>
+        </visual>
+
+        <collision name="rail_north_collision">
+          <pose>0 0.375 0.95 0 0 0</pose>
+          <geometry><box><size>4.0 0.05 0.10</size></box></geometry>
+        </collision>
+        <visual name="rail_north_visual">
+          <pose>0 0.375 0.95 0 0 0</pose>
+          <geometry><box><size>4.0 0.05 0.10</size></box></geometry>
+          <material><ambient>0.12 0.13 0.15 1</ambient><diffuse>0.16 0.17 0.19 1</diffuse></material>
+        </visual>
+
+        <collision name="rail_south_collision">
+          <pose>0 -0.375 0.95 0 0 0</pose>
+          <geometry><box><size>4.0 0.05 0.10</size></box></geometry>
+        </collision>
+        <visual name="rail_south_visual">
+          <pose>0 -0.375 0.95 0 0 0</pose>
+          <geometry><box><size>4.0 0.05 0.10</size></box></geometry>
+          <material><ambient>0.12 0.13 0.15 1</ambient><diffuse>0.16 0.17 0.19 1</diffuse></material>
+        </visual>
+
+        <collision name="leg_sw_collision">
+          <pose>-1.8 -0.30 0.43 0 0 0</pose>
+          <geometry><box><size>0.08 0.08 0.86</size></box></geometry>
+        </collision>
+        <visual name="leg_sw_visual">
+          <pose>-1.8 -0.30 0.43 0 0 0</pose>
+          <geometry><box><size>0.08 0.08 0.86</size></box></geometry>
+          <material><ambient>0.12 0.13 0.15 1</ambient><diffuse>0.16 0.17 0.19 1</diffuse></material>
+        </visual>
+
+        <collision name="leg_ne_collision">
+          <pose>-1.8 0.30 0.43 0 0 0</pose>
+          <geometry><box><size>0.08 0.08 0.86</size></box></geometry>
+        </collision>
+        <visual name="leg_ne_visual">
+          <pose>-1.8 0.30 0.43 0 0 0</pose>
+          <geometry><box><size>0.08 0.08 0.86</size></box></geometry>
+          <material><ambient>0.12 0.13 0.15 1</ambient><diffuse>0.16 0.17 0.19 1</diffuse></material>
+        </visual>
+
+        <collision name="leg_se_collision">
+          <pose>1.8 -0.30 0.43 0 0 0</pose>
+          <geometry><box><size>0.08 0.08 0.86</size></box></geometry>
+        </collision>
+        <visual name="leg_se_visual">
+          <pose>1.8 -0.30 0.43 0 0 0</pose>
+          <geometry><box><size>0.08 0.08 0.86</size></box></geometry>
+          <material><ambient>0.12 0.13 0.15 1</ambient><diffuse>0.16 0.17 0.19 1</diffuse></material>
+        </visual>
+
+        <collision name="leg_nw_collision">
+          <pose>1.8 0.30 0.43 0 0 0</pose>
+          <geometry><box><size>0.08 0.08 0.86</size></box></geometry>
+        </collision>
+        <visual name="leg_nw_visual">
+          <pose>1.8 0.30 0.43 0 0 0</pose>
+          <geometry><box><size>0.08 0.08 0.86</size></box></geometry>
+          <material><ambient>0.12 0.13 0.15 1</ambient><diffuse>0.16 0.17 0.19 1</diffuse></material>
+        </visual>
+
+        <collision name="motor_collision">
+          <pose>2.2 0 0.70 0 0 0</pose>
+          <geometry><box><size>0.4 0.5 0.4</size></box></geometry>
+        </collision>
+        <visual name="motor_visual">
+          <pose>2.2 0 0.70 0 0 0</pose>
+          <geometry><box><size>0.4 0.5 0.4</size></box></geometry>
+          <material><ambient>0.15 0.16 0.18 1</ambient><diffuse>0.20 0.21 0.23 1</diffuse></material>
+        </visual>
+
+      </link>
+    </model>
+
+    <!-- Workcell workbench: top surface at 0.75 m. -->
+    <model name="workbench">
+      <static>true</static>
+      <pose>2 3.2 0 0 0 0</pose>
+      <link name="workbench_link">
+
+        <collision name="top_collision">
+          <pose>0 0 0.725 0 0 0</pose>
+          <geometry><box><size>1.2 0.8 0.05</size></box></geometry>
+        </collision>
+        <visual name="top_visual">
+          <pose>0 0 0.725 0 0 0</pose>
+          <geometry><box><size>1.2 0.8 0.05</size></box></geometry>
+          <material><ambient>0.60 0.62 0.64 1</ambient><diffuse>0.66 0.68 0.70 1</diffuse></material>
+        </visual>
+
+        <collision name="leg_w_n_collision">
+          <pose>-0.54 -0.34 0.35 0 0 0</pose>
+          <geometry><box><size>0.06 0.06 0.70</size></box></geometry>
+        </collision>
+        <visual name="leg_w_n_visual">
+          <pose>-0.54 -0.34 0.35 0 0 0</pose>
+          <geometry><box><size>0.06 0.06 0.70</size></box></geometry>
+          <material><ambient>0.12 0.13 0.15 1</ambient><diffuse>0.16 0.17 0.19 1</diffuse></material>
+        </visual>
+
+        <collision name="leg_w_s_collision">
+          <pose>-0.54 0.34 0.35 0 0 0</pose>
+          <geometry><box><size>0.06 0.06 0.70</size></box></geometry>
+        </collision>
+        <visual name="leg_w_s_visual">
+          <pose>-0.54 0.34 0.35 0 0 0</pose>
+          <geometry><box><size>0.06 0.06 0.70</size></box></geometry>
+          <material><ambient>0.12 0.13 0.15 1</ambient><diffuse>0.16 0.17 0.19 1</diffuse></material>
+        </visual>
+
+        <collision name="leg_e_n_collision">
+          <pose>0.54 -0.34 0.35 0 0 0</pose>
+          <geometry><box><size>0.06 0.06 0.70</size></box></geometry>
+        </collision>
+        <visual name="leg_e_n_visual">
+          <pose>0.54 -0.34 0.35 0 0 0</pose>
+          <geometry><box><size>0.06 0.06 0.70</size></box></geometry>
+          <material><ambient>0.12 0.13 0.15 1</ambient><diffuse>0.16 0.17 0.19 1</diffuse></material>
+        </visual>
+
+        <collision name="leg_e_s_collision">
+          <pose>0.54 0.34 0.35 0 0 0</pose>
+          <geometry><box><size>0.06 0.06 0.70</size></box></geometry>
+        </collision>
+        <visual name="leg_e_s_visual">
+          <pose>0.54 0.34 0.35 0 0 0</pose>
+          <geometry><box><size>0.06 0.06 0.70</size></box></geometry>
+          <material><ambient>0.12 0.13 0.15 1</ambient><diffuse>0.16 0.17 0.19 1</diffuse></material>
+        </visual>
+
+        <collision name="lower_shelf_collision">
+          <pose>0 0 0.20 0 0 0</pose>
+          <geometry><box><size>1.1 0.7 0.03</size></box></geometry>
+        </collision>
+        <visual name="lower_shelf_visual">
+          <pose>0 0 0.20 0 0 0</pose>
+          <geometry><box><size>1.1 0.7 0.03</size></box></geometry>
+          <material><ambient>0.30 0.32 0.35 1</ambient><diffuse>0.34 0.36 0.38 1</diffuse></material>
+        </visual>
+
+      </link>
+    </model>
+
+    <!-- Overhead pipe at z = 1.10 m, axis along y. Hangers reach the roof. -->
+    <model name="overhead_pipe">
+      <static>true</static>
+      <pose>4 -4 1.1 0 0 0</pose>
+      <link name="pipe_link">
+
+        <collision name="pipe_collision">
+          <pose>0 0 0 1.5708 0 0</pose>
+          <geometry>
+            <cylinder>
+              <radius>0.04</radius>
+              <length>3.8</length>
+            </cylinder>
+          </geometry>
+        </collision>
+        <visual name="pipe_visual">
+          <pose>0 0 0 1.5708 0 0</pose>
+          <geometry>
+            <cylinder>
+              <radius>0.04</radius>
+              <length>3.8</length>
+            </cylinder>
+          </geometry>
+          <material><ambient>0.10 0.42 0.20 1</ambient><diffuse>0.12 0.50 0.24 1</diffuse></material>
+        </visual>
+
+        <collision name="flange_east_collision">
+          <pose>0 1.9 0 1.5708 0 0</pose>
+          <geometry>
+            <cylinder>
+              <radius>0.07</radius>
+              <length>0.04</length>
+            </cylinder>
+          </geometry>
+        </collision>
+        <visual name="flange_east_visual">
+          <pose>0 1.9 0 1.5708 0 0</pose>
+          <geometry>
+            <cylinder>
+              <radius>0.07</radius>
+              <length>0.04</length>
+            </cylinder>
+          </geometry>
+          <material><ambient>0.12 0.13 0.15 1</ambient><diffuse>0.16 0.17 0.19 1</diffuse></material>
+        </visual>
+
+        <collision name="flange_west_collision">
+          <pose>0 -1.9 0 1.5708 0 0</pose>
+          <geometry>
+            <cylinder>
+              <radius>0.07</radius>
+              <length>0.04</length>
+            </cylinder>
+          </geometry>
+        </collision>
+        <visual name="flange_west_visual">
+          <pose>0 -1.9 0 1.5708 0 0</pose>
+          <geometry>
+            <cylinder>
+              <radius>0.07</radius>
+              <length>0.04</length>
+            </cylinder>
+          </geometry>
+          <material><ambient>0.12 0.13 0.15 1</ambient><diffuse>0.16 0.17 0.19 1</diffuse></material>
+        </visual>
+
+        <collision name="hanger_east_collision">
+          <pose>0 1.9 2.2 0 0 0</pose>
+          <geometry><cylinder><radius>0.015</radius><length>4.4</length></cylinder></geometry>
+        </collision>
+        <visual name="hanger_east_visual">
+          <pose>0 1.9 2.2 0 0 0</pose>
+          <geometry><cylinder><radius>0.015</radius><length>4.4</length></cylinder></geometry>
+          <material><ambient>0.12 0.13 0.15 1</ambient><diffuse>0.16 0.17 0.19 1</diffuse></material>
+        </visual>
+
+        <collision name="hanger_west_collision">
+          <pose>0 -1.9 2.2 0 0 0</pose>
+          <geometry><cylinder><radius>0.015</radius><length>4.4</length></cylinder></geometry>
+        </collision>
+        <visual name="hanger_west_visual">
+          <pose>0 -1.9 2.2 0 0 0</pose>
+          <geometry><cylinder><radius>0.015</radius><length>4.4</length></cylinder></geometry>
+          <material><ambient>0.12 0.13 0.15 1</ambient><diffuse>0.16 0.17 0.19 1</diffuse></material>
+        </visual>
+
+      </link>
+    </model>
+
+    <!--
+      Loading dock: 0.30 m platform on top of the main floor. The edge at x = 7.5 m
+      is the negative obstacle N3. A 10 deg ramp gives access from the main aisle.
+    -->
+    <model name="loading_dock">
+      <static>true</static>
+      <pose>9.5 -6 0 0 0 0</pose>
+      <link name="dock_link">
+
+        <collision name="base_collision">
+          <pose>0 0 0.15 0 0 0</pose>
+          <geometry><box><size>4.0 3.0 0.30</size></box></geometry>
+        </collision>
+        <visual name="base_visual">
+          <pose>0 0 0.15 0 0 0</pose>
+          <geometry><box><size>4.0 3.0 0.30</size></box></geometry>
+          <material><ambient>0.60 0.62 0.64 1</ambient><diffuse>0.66 0.68 0.70 1</diffuse></material>
+        </visual>
+
+        <visual name="edge_stripe">
+          <pose>-1.95 0 0.305 0 0 0</pose>
+          <geometry><box><size>0.10 3.0 0.01</size></box></geometry>
+          <material><ambient>0.95 0.72 0.05 1</ambient><diffuse>1.00 0.78 0.05 1</diffuse></material>
+        </visual>
+
+        <collision name="bumper_north_collision">
+          <pose>-2.04 0.8 0.15 0 0 0</pose>
+          <geometry><box><size>0.08 0.5 0.2</size></box></geometry>
+        </collision>
+        <visual name="bumper_north_visual">
+          <pose>-2.04 0.8 0.15 0 0 0</pose>
+          <geometry><box><size>0.08 0.5 0.2</size></box></geometry>
+          <material><ambient>0.05 0.05 0.05 1</ambient><diffuse>0.08 0.08 0.08 1</diffuse></material>
+        </visual>
+
+        <collision name="bumper_south_collision">
+          <pose>-2.04 -0.8 0.15 0 0 0</pose>
+          <geometry><box><size>0.08 0.5 0.2</size></box></geometry>
+        </collision>
+        <visual name="bumper_south_visual">
+          <pose>-2.04 -0.8 0.15 0 0 0</pose>
+          <geometry><box><size>0.08 0.5 0.2</size></box></geometry>
+          <material><ambient>0.05 0.05 0.05 1</ambient><diffuse>0.08 0.08 0.08 1</diffuse></material>
+        </visual>
+
+      </link>
+    </model>
+
+    <model name="loading_ramp">
+      <static>true</static>
+      <pose>6.65 -6 0.10 -0.1745 0 0</pose>
+      <link name="ramp_link">
+
+        <collision name="ramp_collision">
+          <pose>0 0 0 0 0 0</pose>
+          <geometry><box><size>1.73 2.0 0.10</size></box></geometry>
+        </collision>
+        <visual name="ramp_visual">
+          <pose>0 0 0 0 0 0</pose>
+          <geometry><box><size>1.73 2.0 0.10</size></box></geometry>
+          <material><ambient>0.12 0.13 0.15 1</ambient><diffuse>0.16 0.17 0.19 1</diffuse></material>
+        </visual>
+
+        <collision name="ramp_rail_north_collision">
+          <pose>0 0.97 0.10 0 0 0</pose>
+          <geometry><box><size>1.73 0.06 0.14</size></box></geometry>
+        </collision>
+        <visual name="ramp_rail_north_visual">
+          <pose>0 0.97 0.10 0 0 0</pose>
+          <geometry><box><size>1.73 0.06 0.14</size></box></geometry>
+          <material><ambient>0.95 0.72 0.05 1</ambient><diffuse>1.00 0.78 0.05 1</diffuse></material>
+        </visual>
+
+        <collision name="ramp_rail_south_collision">
+          <pose>0 -0.97 0.10 0 0 0</pose>
+          <geometry><box><size>1.73 0.06 0.14</size></box></geometry>
+        </collision>
+        <visual name="ramp_rail_south_visual">
+          <pose>0 -0.97 0.10 0 0 0</pose>
+          <geometry><box><size>1.73 0.06 0.14</size></box></geometry>
+          <material><ambient>0.95 0.72 0.05 1</ambient><diffuse>1.00 0.78 0.05 1</diffuse></material>
+        </visual>
+
+      </link>
+    </model>
+
+    <!-- Safety bollards and control obstacles. -->
+    <model name="bollard_workbench_west">
+      <static>true</static>
+      <pose>0.6 2.4 0 0 0 0</pose>
+      <link name="bollard_link">
+        <collision name="bollard_body_collision">
+          <pose>0 0 0.4 0 0 0</pose>
+          <geometry><cylinder><radius>0.08</radius><length>0.8</length></cylinder></geometry>
+        </collision>
+        <visual name="bollard_body_visual">
+          <pose>0 0 0.4 0 0 0</pose>
+          <geometry><cylinder><radius>0.08</radius><length>0.8</length></cylinder></geometry>
+          <material><ambient>0.95 0.72 0.05 1</ambient><diffuse>1.00 0.78 0.05 1</diffuse></material>
+        </visual>
+        <visual name="bollard_band_visual">
+          <pose>0 0 0.55 0 0 0</pose>
+          <geometry><cylinder><radius>0.085</radius><length>0.08</length></cylinder></geometry>
+          <material><ambient>0.05 0.05 0.05 1</ambient><diffuse>0.08 0.08 0.08 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+
+    <model name="bollard_workbench_east">
+      <static>true</static>
+      <pose>3.4 2.4 0 0 0 0</pose>
+      <link name="bollard_link">
+        <collision name="bollard_body_collision">
+          <pose>0 0 0.4 0 0 0</pose>
+          <geometry><cylinder><radius>0.08</radius><length>0.8</length></cylinder></geometry>
+        </collision>
+        <visual name="bollard_body_visual">
+          <pose>0 0 0.4 0 0 0</pose>
+          <geometry><cylinder><radius>0.08</radius><length>0.8</length></cylinder></geometry>
+          <material><ambient>0.95 0.72 0.05 1</ambient><diffuse>1.00 0.78 0.05 1</diffuse></material>
+        </visual>
+        <visual name="bollard_band_visual">
+          <pose>0 0 0.55 0 0 0</pose>
+          <geometry><cylinder><radius>0.085</radius><length>0.08</length></cylinder></geometry>
+          <material><ambient>0.05 0.05 0.05 1</ambient><diffuse>0.08 0.08 0.08 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+
+    <model name="bollard_dock_north">
+      <static>true</static>
+      <pose>7.2 -4.3 0 0 0 0</pose>
+      <link name="bollard_link">
+        <collision name="bollard_body_collision">
+          <pose>0 0 0.4 0 0 0</pose>
+          <geometry><cylinder><radius>0.08</radius><length>0.8</length></cylinder></geometry>
+        </collision>
+        <visual name="bollard_body_visual">
+          <pose>0 0 0.4 0 0 0</pose>
+          <geometry><cylinder><radius>0.08</radius><length>0.8</length></cylinder></geometry>
+          <material><ambient>0.95 0.72 0.05 1</ambient><diffuse>1.00 0.78 0.05 1</diffuse></material>
+        </visual>
+        <visual name="bollard_band_visual">
+          <pose>0 0 0.55 0 0 0</pose>
+          <geometry><cylinder><radius>0.085</radius><length>0.08</length></cylinder></geometry>
+          <material><ambient>0.05 0.05 0.05 1</ambient><diffuse>0.08 0.08 0.08 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+
+    <model name="bollard_dock_south">
+      <static>true</static>
+      <pose>7.2 -7.7 0 0 0 0</pose>
+      <link name="bollard_link">
+        <collision name="bollard_body_collision">
+          <pose>0 0 0.4 0 0 0</pose>
+          <geometry><cylinder><radius>0.08</radius><length>0.8</length></cylinder></geometry>
+        </collision>
+        <visual name="bollard_body_visual">
+          <pose>0 0 0.4 0 0 0</pose>
+          <geometry><cylinder><radius>0.08</radius><length>0.8</length></cylinder></geometry>
+          <material><ambient>0.95 0.72 0.05 1</ambient><diffuse>1.00 0.78 0.05 1</diffuse></material>
+        </visual>
+        <visual name="bollard_band_visual">
+          <pose>0 0 0.55 0 0 0</pose>
+          <geometry><cylinder><radius>0.085</radius><length>0.08</length></cylinder></geometry>
+          <material><ambient>0.05 0.05 0.05 1</ambient><diffuse>0.08 0.08 0.08 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+
+    <model name="bollard_conveyor_west">
+      <static>true</static>
+      <pose>-10.3 2 0 0 0 0</pose>
+      <link name="bollard_link">
+        <collision name="bollard_body_collision">
+          <pose>0 0 0.4 0 0 0</pose>
+          <geometry><cylinder><radius>0.08</radius><length>0.8</length></cylinder></geometry>
+        </collision>
+        <visual name="bollard_body_visual">
+          <pose>0 0 0.4 0 0 0</pose>
+          <geometry><cylinder><radius>0.08</radius><length>0.8</length></cylinder></geometry>
+          <material><ambient>0.95 0.72 0.05 1</ambient><diffuse>1.00 0.78 0.05 1</diffuse></material>
+        </visual>
+        <visual name="bollard_band_visual">
+          <pose>0 0 0.55 0 0 0</pose>
+          <geometry><cylinder><radius>0.085</radius><length>0.08</length></cylinder></geometry>
+          <material><ambient>0.05 0.05 0.05 1</ambient><diffuse>0.08 0.08 0.08 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+
+    <model name="bollard_conveyor_east">
+      <static>true</static>
+      <pose>-5.7 2 0 0 0 0</pose>
+      <link name="bollard_link">
+        <collision name="bollard_body_collision">
+          <pose>0 0 0.4 0 0 0</pose>
+          <geometry><cylinder><radius>0.08</radius><length>0.8</length></cylinder></geometry>
+        </collision>
+        <visual name="bollard_body_visual">
+          <pose>0 0 0.4 0 0 0</pose>
+          <geometry><cylinder><radius>0.08</radius><length>0.8</length></cylinder></geometry>
+          <material><ambient>0.95 0.72 0.05 1</ambient><diffuse>1.00 0.78 0.05 1</diffuse></material>
+        </visual>
+        <visual name="bollard_band_visual">
+          <pose>0 0 0.55 0 0 0</pose>
+          <geometry><cylinder><radius>0.085</radius><length>0.08</length></cylinder></geometry>
+          <material><ambient>0.05 0.05 0.05 1</ambient><diffuse>0.08 0.08 0.08 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+
+    <model name="control_box_a">
+      <static>true</static>
+      <pose>3.8 -2.7 0.25 0 0 0</pose>
+      <link name="control_link">
+        <collision name="control_collision">
+          <pose>0 0 0 0 0 0</pose>
+          <geometry><box><size>0.5 0.5 0.5</size></box></geometry>
+        </collision>
+        <visual name="control_visual">
+          <pose>0 0 0 0 0 0</pose>
+          <geometry><box><size>0.5 0.5 0.5</size></box></geometry>
+          <material><ambient>0.08 0.28 0.62 1</ambient><diffuse>0.12 0.36 0.70 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+
+    <model name="control_box_b">
+      <static>true</static>
+      <pose>-1.2 2.7 0.15 0 0 0</pose>
+      <link name="control_link">
+        <collision name="control_collision">
+          <pose>0 0 0 0 0 0</pose>
+          <geometry><box><size>0.3 0.3 0.3</size></box></geometry>
+        </collision>
+        <visual name="control_visual">
+          <pose>0 0 0 0 0 0</pose>
+          <geometry><box><size>0.3 0.3 0.3</size></box></geometry>
+          <material><ambient>0.08 0.28 0.62 1</ambient><diffuse>0.12 0.36 0.70 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+
+    <model name="control_box_c">
+      <static>true</static>
+      <pose>-2.5 -2.8 0.2 0 0 0</pose>
+      <link name="control_link">
+        <collision name="control_collision">
+          <pose>0 0 0 0 0 0</pose>
+          <geometry><box><size>0.6 0.4 0.4</size></box></geometry>
+        </collision>
+        <visual name="control_visual">
+          <pose>0 0 0 0 0 0</pose>
+          <geometry><box><size>0.6 0.4 0.4</size></box></geometry>
+          <material><ambient>0.52 0.40 0.26 1</ambient><diffuse>0.60 0.46 0.30 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+
+    <model name="barrel">
+      <static>true</static>
+      <pose>-9.5 -2.5 0.45 0 0 0</pose>
+      <link name="barrel_link">
+        <collision name="barrel_collision">
+          <pose>0 0 0 0 0 0</pose>
+          <geometry><cylinder><radius>0.3</radius><length>0.9</length></cylinder></geometry>
+        </collision>
+        <visual name="barrel_visual">
+          <pose>0 0 0 0 0 0</pose>
+          <geometry><cylinder><radius>0.3</radius><length>0.9</length></cylinder></geometry>
+          <material><ambient>0.08 0.28 0.62 1</ambient><diffuse>0.12 0.36 0.70 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+
+    <plugin filename="gz-sim-physics-system" name="gz::sim::systems::Physics"/>
+    <plugin filename="gz-sim-user-commands-system" name="gz::sim::systems::UserCommands"/>
+    <plugin filename="gz-sim-scene-broadcaster-system" name="gz::sim::systems::SceneBroadcaster"/>
+    <plugin filename="gz-sim-sensors-system" name="gz::sim::systems::Sensors">
+      <render_engine>ogre2</render_engine>
+    </plugin>
+
+  </world>
+</sdf>

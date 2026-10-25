@@ -1,0 +1,73 @@
+# ros_gz_bridge topic mapping for the negative-obstacle simulation.
+#
+# Directions:
+#   GZ_TO_ROS  - Gazebo publishes, ROS subscribes
+#   ROS_TO_GZ  - ROS publishes, Gazebo subscribes
+#
+# The "frame_id" fields override the Gazebo header so the ROS messages carry the
+# URDF link name. Point clouds are expressed in the sensor link frame (x forward,
+# z up), matching the Gazebo sensor convention.
+
+# Sim clock. Gazebo Sim >= 8 publishes the clock on the world-namespaced topic
+# once it detects an additional publisher on "/clock", so bridge that instead.
+- ros_topic_name: "/clock"
+  gz_topic_name: "/world/factory_negative_obstacle/clock"
+  ros_type_name: "rosgraph_msgs/msg/Clock"
+  gz_type_name: "gz.msgs.Clock"
+  direction: GZ_TO_ROS
+
+- ros_topic_name: "/depth_camera/points"
+  gz_topic_name: "/depth_camera/points"
+  ros_type_name: "sensor_msgs/msg/PointCloud2"
+  gz_type_name: "gz.msgs.PointCloudPacked"
+  direction: GZ_TO_ROS
+  frame_id: "depth_camera_link"
+  qos_profile: SENSOR_DATA
+
+- ros_topic_name: "/depth_camera/image"
+  gz_topic_name: "/depth_camera/image"
+  ros_type_name: "sensor_msgs/msg/Image"
+  gz_type_name: "gz.msgs.Image"
+  direction: GZ_TO_ROS
+  frame_id: "depth_camera_optical_frame"
+  qos_profile: SENSOR_DATA
+
+- ros_topic_name: "/depth_camera/depth_image"
+  gz_topic_name: "/depth_camera/depth_image"
+  ros_type_name: "sensor_msgs/msg/Image"
+  gz_type_name: "gz.msgs.Image"
+  direction: GZ_TO_ROS
+  frame_id: "depth_camera_optical_frame"
+  qos_profile: SENSOR_DATA
+
+- ros_topic_name: "/depth_camera/camera_info"
+  gz_topic_name: "/depth_camera/camera_info"
+  ros_type_name: "sensor_msgs/msg/CameraInfo"
+  gz_type_name: "gz.msgs.CameraInfo"
+  direction: GZ_TO_ROS
+  frame_id: "depth_camera_optical_frame"
+  qos_profile: SENSOR_DATA
+
+- ros_topic_name: "/lidar3d/points"
+  gz_topic_name: "/lidar3d/points"
+  ros_type_name: "sensor_msgs/msg/PointCloud2"
+  gz_type_name: "gz.msgs.PointCloudPacked"
+  direction: GZ_TO_ROS
+  frame_id: "lidar3d_link"
+  qos_profile: SENSOR_DATA
+
+- ros_topic_name: "/lidar2d/points"
+  gz_topic_name: "/lidar2d/points"
+  ros_type_name: "sensor_msgs/msg/PointCloud2"
+  gz_type_name: "gz.msgs.PointCloudPacked"
+  direction: GZ_TO_ROS
+  frame_id: "lidar2d_link"
+  qos_profile: SENSOR_DATA
+
+- ros_topic_name: "/scan"
+  gz_topic_name: "/lidar2d"
+  ros_type_name: "sensor_msgs/msg/LaserScan"
+  gz_type_name: "gz.msgs.LaserScan"
+  direction: GZ_TO_ROS
+  frame_id: "lidar2d_link"
+  qos_profile: SENSOR_DATA

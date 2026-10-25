@@ -1,0 +1,67 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <!--
+    3D gpu_lidar sensor, 32 vertical channels, 40 deg vertical FoV
+    (-25 deg to +15 deg), 360 deg horizontal. Frame convention: x forward,
+    z up (body convention), matching Gazebo. The link pitch (passed as "rpy")
+    tilts the whole scan downward.
+  -->
+  <xacro:macro name="lidar3d" params="name parent_link xyz rpy">
+    <link name="${name}_link">
+      <visual>
+        <geometry><cylinder radius="0.05" length="0.07"/></geometry>
+        <material name="dark_grey"/>
+      </visual>
+      <collision>
+        <geometry><cylinder radius="0.05" length="0.07"/></geometry>
+      </collision>
+      <inertial>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <mass value="0.3"/>
+        <inertia ixx="2e-4" ixy="0" ixz="0" iyy="2e-4" iyz="0" izz="4e-4"/>
+      </inertial>
+    </link>
+
+    <joint name="${name}_joint" type="fixed">
+      <parent link="${parent_link}"/>
+      <child link="${name}_link"/>
+      <origin xyz="${xyz}" rpy="${rpy}"/>
+    </joint>
+
+    <gazebo reference="${name}_link">
+      <sensor type="gpu_lidar" name="${name}">
+        <topic>${name}</topic>
+        <update_rate>10</update_rate>
+        <lidar>
+          <scan>
+            <horizontal>
+              <samples>720</samples>
+              <resolution>1</resolution>
+              <min_angle>-3.14159</min_angle>
+              <max_angle>3.14159</max_angle>
+            </horizontal>
+            <vertical>
+              <samples>32</samples>
+              <resolution>1</resolution>
+              <min_angle>-0.43633</min_angle>
+              <max_angle>0.26180</max_angle>
+            </vertical>
+          </scan>
+          <range>
+            <min>0.5</min>
+            <max>30</max>
+            <resolution>0.01</resolution>
+          </range>
+          <noise>
+            <type>gaussian</type>
+            <mean>0</mean>
+            <stddev>0.02</stddev>
+          </noise>
+        </lidar>
+        <always_on>1</always_on>
+      </sensor>
+    </gazebo>
+  </xacro:macro>
+
+</robot>

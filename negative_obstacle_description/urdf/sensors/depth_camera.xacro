@@ -1,0 +1,75 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <!--
+    RGB-D camera sensor.
+
+    Frame convention note: Gazebo cameras look along the +X axis of their
+    reference frame, with +Z up (body convention). The depth point cloud is
+    therefore produced in the "depth_camera_link" frame, NOT in the optical
+    frame. We keep a REP-103 optical frame (z forward) only for the image and
+    camera-info topics; the point cloud is consumed in the link frame and
+    re-framed to base_link by TF.
+
+    Gazebo does not model depth noise. The noise budget in
+    docs/detection-spec.md (Section 5.1) is a design target for real hardware
+    and is exercised by unit tests, not by this sensor definition.
+  -->
+  <xacro:macro name="depth_camera" params="name parent_link xyz rpy">
+    <link name="${name}_link">
+      <visual>
+        <geometry><box size="0.05 0.11 0.035"/></geometry>
+        <material name="black"/>
+      </visual>
+      <visual>
+        <origin xyz="0.03 0 0" rpy="0 1.5708 0"/>
+        <geometry><cylinder radius="0.018" length="0.012"/></geometry>
+        <material name="dark_grey"/>
+      </visual>
+      <collision>
+        <geometry><box size="0.05 0.11 0.035"/></geometry>
+      </collision>
+      <inertial>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <mass value="0.07"/>
+        <inertia ixx="1e-4" ixy="0" ixz="0" iyy="1e-4" iyz="0" izz="1e-4"/>
+      </inertial>
+    </link>
+
+    <joint name="${name}_joint" type="fixed">
+      <parent link="${parent_link}"/>
+      <child link="${name}_link"/>
+      <origin xyz="${xyz}" rpy="${rpy}"/>
+    </joint>
+
+    <link name="${name}_optical_frame"/>
+
+    <joint name="${name}_optical_joint" type="fixed">
+      <parent link="${name}_link"/>
+      <child link="${name}_optical_frame"/>
+      <origin xyz="0 0 0" rpy="-1.5708 0 -1.5708"/>
+    </joint>
+
+    <gazebo reference="${name}_link">
+      <sensor type="rgbd_camera" name="${name}">
+        <topic>${name}</topic>
+        <update_rate>15</update_rate>
+        <camera>
+          <!-- 87 deg horizontal FoV; vertical is derived from the 4:3 aspect. -->
+          <horizontal_fov>1.51844</horizontal_fov>
+          <image>
+            <width>640</width>
+            <height>480</height>
+          </image>
+          <clip>
+            <near>0.05</near>
+            <far>8.0</far>
+          </clip>
+        </camera>
+        <always_on>1</always_on>
+        <visualize>0</visualize>
+      </sensor>
+    </gazebo>
+  </xacro:macro>
+
+</robot>
