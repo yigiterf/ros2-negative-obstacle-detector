@@ -1,0 +1,76 @@
+cmake_minimum_required(VERSION 3.16)
+project(negative_obstacle_detector)
+
+if(NOT CMAKE_CXX_STANDARD)
+  set(CMAKE_CXX_STANDARD 20)
+endif()
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+  add_compile_options(-Wall -Wextra -Wpedantic)
+endif()
+
+find_package(ament_cmake REQUIRED)
+find_package(rclcpp REQUIRED)
+find_package(rclcpp_lifecycle REQUIRED)
+find_package(sensor_msgs REQUIRED)
+find_package(pcl_conversions REQUIRED)
+find_package(tf2_ros REQUIRED)
+find_package(tf2_eigen REQUIRED)
+find_package(PCL 1.14 REQUIRED COMPONENTS common filters)
+
+add_library(cloud_preprocessor
+  src/cloud_preprocessor.cpp
+)
+target_include_directories(cloud_preprocessor PUBLIC
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+  $<INSTALL_INTERFACE:include>
+)
+target_link_libraries(cloud_preprocessor PUBLIC
+  ${PCL_LIBRARIES}
+)
+target_include_directories(cloud_preprocessor SYSTEM PUBLIC
+  ${PCL_INCLUDE_DIRS}
+)
+target_compile_definitions(cloud_preprocessor PUBLIC
+  ${PCL_DEFINITIONS}
+)
+
+add_executable(negative_obstacle_detector_node
+  src/detector_node.cpp
+  src/main.cpp
+)
+target_link_libraries(negative_obstacle_detector_node
+  cloud_preprocessor
+)
+ament_target_dependencies(negative_obstacle_detector_node
+  rclcpp
+  rclcpp_lifecycle
+  sensor_msgs
+  pcl_conversions
+)
+
+install(
+  DIRECTORY include/ config
+  DESTINATION share/${PROJECT_NAME}
+)
+install(
+  TARGETS cloud_preprocessor negative_obstacle_detector_node
+  EXPORT ${PROJECT_NAME}_export
+  ARCHIVE DESTINATION lib
+  LIBRARY DESTINATION lib
+  RUNTIME DESTINATION lib/${PROJECT_NAME}
+  INCLUDES DESTINATION include
+)
+
+ament_export_targets(${PROJECT_NAME}_export HAS_LIBRARY_TARGET)
+ament_export_dependencies(
+  rclcpp rclcpp_lifecycle sensor_msgs pcl_conversions tf2_ros tf2_eigen
+)
+
+if(BUILD_TESTING)
+  find_package(ament_lint_auto REQUIRED)
+  ament_lint_auto_find_test_dependencies()
+endif()
+
+ament_package()

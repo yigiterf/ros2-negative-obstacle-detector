@@ -1,0 +1,18 @@
+# Parameters for the negative-obstacle detector node.
+#
+# The preprocessor crops and downsamples the input cloud in its source frame.
+# The vertical band (min_height / max_height) becomes gravity-aligned once the
+# cloud is transformed to base_link (Phase 3).
+
+negative_obstacle_detector:
+  ros__parameters:
+    input_topic: "/depth_camera/points"
+    output_topic: "/negative_obstacle/preprocessed"
+
+    preprocessor:
+      min_range: 0.4
+      max_range: 6.0
+      min_height: -0.6
+      max_height: 1.2
+      half_width: 3.0
+      voxel_leaf_size: 0.02
