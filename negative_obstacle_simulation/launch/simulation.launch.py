@@ -20,6 +20,7 @@ from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument
 from launch.actions import ExecuteProcess
+from launch.actions import SetEnvironmentVariable
 from launch.actions import TimerAction
 from launch.conditions import IfCondition
 from launch.conditions import UnlessCondition
@@ -104,6 +105,9 @@ def generate_launch_description():
     spawn_delayed = TimerAction(period=3.0, actions=[spawn_robot])
 
     return LaunchDescription([
+        # Force gz-transport onto loopback. Multicast discovery fails on
+        # machines without a multicast route, which silently breaks the bridge.
+        SetEnvironmentVariable(name='GZ_IP', value='127.0.0.1'),
         declare_headless,
         robot_state_publisher,
         gazebo_gui,
