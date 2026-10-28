@@ -5,12 +5,11 @@ obstacles** (table tops, low pipes) that a single-plane 2D lidar cannot see, and
 reports them to the Nav2 costmap as lethal cells.
 
 The detector consumes 3D point clouds (RGB-D and 3D lidar), estimates the ground
-plane, extracts geometric discontinuities and projects them into a 2D
-costmap-friendly representation. It targets differential-drive AMRs operating in
-warehouse and factory environments.
+plane with RANSAC, extracts geometric discontinuities, and projects them into a 2D
+costmap-friendly representation via a custom Nav2 costmap layer.
 
-> **Status:** Phase 2 (perception pipeline) complete and verified in simulation.
-> Ground segmentation (RANSAC) and costmap projection are in progress.
+> **Status:** all four phases complete and verified end-to-end in simulation —
+> a 0.6 x 0.6 m, 20 cm deep pit is marked lethal at 2.5 m range.
 
 ## Motivation
 
@@ -19,15 +18,14 @@ the lidar's perspective it is indistinguishable from out-of-range space. The sam
 applies to a table top above the scan plane. This repository adds the missing
 third dimension.
 
-## Features
+## Pipeline
 
-- Gazebo Harmonic factory world with ground-truth negative obstacles, overhangs,
-  storage racks, loading dock and conveyor (see `docs/detection-spec.md`).
-- Reference AMR description (URDF/Xacro) with RGB-D camera, 3D lidar, 2D lidar and
-  IMU, following REP-103/105.
-- ROS 2 `ros_gz_bridge` topic mapping and launch files.
-- `negative_obstacle_detector` LifecycleNode with a reusable, allocation-free
-  pre-processing stage (finite filter, PassThrough, VoxelGrid).
+```
+PointCloud2 -> TF (base_link) -> finite filter -> PassThrough -> VoxelGrid
+           -> RANSAC ground plane -> signed-distance classification
+           -> Euclidean clustering -> hazard cloud -> Nav2 costmap layer
+           -> LETHAL cells
+```
 
 ## Packages
 
@@ -35,14 +33,14 @@ third dimension.
 |---|---|
 | `negative_obstacle_description` | URDF/Xacro model of the reference AMR |
 | `negative_obstacle_simulation` | Gazebo world, bridge config, launch files |
-| `negative_obstacle_detector` | Perception node (pre-processing, segmentation, projection) |
-| `negative_obstacle_costmap_plugin` | Nav2 costmap layer (planned) |
+| `negative_obstacle_detector` | Perception node (pre-processing, RANSAC segmentation, obstacle extraction) |
+| `negative_obstacle_costmap_plugin` | Nav2 costmap layer that marks hazards lethal |
+| `negative_obstacle_bringup` | Full-stack launch, Nav2 config, RViz config |
 
 ## Requirements
 
 - Ubuntu 24.04, ROS 2 Jazzy
-- Gazebo Harmonic (via `ros_gz_sim`)
-- PCL 1.14 (`libpcl-dev`), Nav2
+- Gazebo Harmonic (via `ros_gz_sim`), PCL 1.14 (`libpcl-dev`), Nav2
 
 ## Build
 
@@ -56,24 +54,21 @@ source install/setup.bash
 ## Run
 
 ```bash
-# Simulation with GUI (factory world + robot + sensors)
-ros2 launch negative_obstacle_simulation simulation.launch.py
+# Full stack: simulation, detector, Nav2 costmap, RViz
+ros2 launch negative_obstacle_bringup negative_obstacle.launch.py
 
-# Headless
-ros2 launch negative_obstacle_simulation simulation.launch.py headless:=true
+# Headless (no Gazebo GUI)
+ros2 launch negative_obstacle_bringup negative_obstacle.launch.py headless:=true
 ```
 
-Then inspect the sensor data:
-
-```bash
-ros2 topic list
-ros2 topic hz /depth_camera/points
-```
+RViz shows the costmap (`/costmap`), the negative-obstacle points
+(`/negative_obstacle/negative`) and markers (`/negative_obstacle/markers`).
 
 ## Documentation
 
 - `docs/detection-spec.md` — numerical contract: geometry, targets, acceptance criteria.
-- The `/learning` notes are intentionally not versioned (personal study material).
+- The `/learning` notes and the engineering whitepaper are intentionally not
+  versioned (personal study material).
 
 ## License
 
