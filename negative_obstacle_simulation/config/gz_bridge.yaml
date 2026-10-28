@@ -71,3 +71,19 @@
   direction: GZ_TO_ROS
   frame_id: "lidar2d_link"
   qos_profile: SENSOR_DATA
+
+# DiffDrive odometry (Gazebo -> ROS). Note: frames are model-scoped
+# ("negative_obstacle_robot/odom"); full dynamic odometry requires a
+# robot_localization EKF to republish odom -> base_footprint.
+- ros_topic_name: "/odom"
+  gz_topic_name: "/model/negative_obstacle_robot/odometry"
+  ros_type_name: "nav_msgs/msg/Odometry"
+  gz_type_name: "gz.msgs.Odometry"
+  direction: GZ_TO_ROS
+
+# Velocity command (ROS -> Gazebo).
+- ros_topic_name: "/cmd_vel"
+  gz_topic_name: "/model/negative_obstacle_robot/cmd_vel"
+  ros_type_name: "geometry_msgs/msg/Twist"
+  gz_type_name: "gz.msgs.Twist"
+  direction: ROS_TO_GZ

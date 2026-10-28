@@ -49,8 +49,9 @@ def generate_launch_description():
                 'launch', 'simulation.launch.py'])]),
         launch_arguments={'headless': headless}.items())
 
-    # Static demo: the robot is at the origin and not moving, so map -> odom ->
-    # base_footprint are fixed identity transforms.
+    # Static demo: map -> odom -> base_footprint are fixed identity transforms.
+    # (Full dynamic odometry via the DiffDrive bridge requires a
+    # robot_localization EKF because Gazebo scopes its TF frame names.)
     map_to_odom = Node(
         package='tf2_ros', executable='static_transform_publisher',
         name='map_to_odom',
