@@ -1,0 +1,9 @@
+<library path="negative_obstacle_layer">
+  <class
+    type="negative_obstacle_costmap_plugin::NegativeObstacleLayer"
+    base_class_type="nav2_costmap_2d::Layer">
+    <description>
+      Marks negative obstacles and overhangs as lethal cells in the Nav2 costmap.
+    </description>
+  </class>
+</library>
