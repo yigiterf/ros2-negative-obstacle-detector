@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>negative_obstacle_bringup</name>
+  <version>0.1.0</version>
+  <description>
+    Launch files, Nav2 configuration and RViz configuration that bring up the
+    complete negative-obstacle detection stack.
+  </description>
+
+  <maintainer email="beteljesed@gmail.com">fyigiter</maintainer>
+  <license>Apache-2.0</license>
+
+  <buildtool_depend>ament_cmake</buildtool_depend>
+
+  <exec_depend>negative_obstacle_simulation</exec_depend>
+  <exec_depend>negative_obstacle_detector</exec_depend>
+  <exec_depend>negative_obstacle_costmap_plugin</exec_depend>
+  <exec_depend>nav2_costmap_2d</exec_depend>
+  <exec_depend>rviz2</exec_depend>
+  <exec_depend>tf2_ros</exec_depend>
+  <exec_depend>robot_state_publisher</exec_depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>

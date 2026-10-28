@@ -1,0 +1,57 @@
+Panels:
+  - Class: rviz_common/Displays
+    Name: Displays
+
+Visualization Manager:
+  Class: ""
+  Displays:
+    - Class: rviz_default_plugins/Grid
+      Name: Grid
+    - Class: rviz_default_plugins/TF
+      Name: TF
+    - Class: rviz_default_plugins/RobotModel
+      Name: RobotModel
+      Description Topic:
+        Value: /robot_description
+    - Class: rviz_default_plugins/Map
+      Name: Costmap
+      Topic:
+        Value: /costmap
+      Color Scheme: costmap
+    - Class: rviz_default_plugins/PointCloud2
+      Name: InputCloud
+      Topic:
+        Value: /depth_camera/points
+      Style: Points
+      Color Transformer: FlatColor
+      Color: 200; 200; 200
+    - Class: rviz_default_plugins/PointCloud2
+      Name: NegativeObstacles
+      Topic:
+        Value: /negative_obstacle/negative
+      Style: Points
+      Color Transformer: FlatColor
+      Color: 255; 0; 0
+      Size (Pixels): 3
+    - Class: rviz_default_plugins/PointCloud2
+      Name: ElevatedObstacles
+      Topic:
+        Value: /negative_obstacle/elevated
+      Style: Points
+      Color Transformer: FlatColor
+      Color: 255; 150; 0
+      Size (Pixels): 3
+    - Class: rviz_default_plugins/MarkerArray
+      Name: Markers
+      Topic:
+        Value: /negative_obstacle/markers
+  Global Options:
+    Background Color: 48; 48; 48
+    Fixed Frame: map
+    Frame Rate: 30
+  Tools:
+    - Class: rviz_default_plugins/Measure
+    - Class: rviz_default_plugins/Select
+    - Class: rviz_default_plugins/MoveCamera
+    - Class: rviz_default_plugins/SetInitialPose
+    - Class: rviz_default_plugins/SetGoal

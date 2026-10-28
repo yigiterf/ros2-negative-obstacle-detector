@@ -1,0 +1,34 @@
+# Nav2 costmap configuration for the negative-obstacle demo.
+#
+# A fixed costmap covers the 24 x 18 m factory. The custom
+# negative_obstacle_layer marks hazards as lethal; the inflation layer pads
+# them so the robot keeps a safe distance.
+
+costmap:
+  ros__parameters:
+    use_sim_time: true
+    global_frame: map
+    robot_base_frame: base_link
+    update_frequency: 10.0
+    publish_frequency: 5.0
+    rolling_window: false
+    track_unknown_space: false
+    origin_x: -12.0
+    origin_y: -9.0
+    width: 24            # meters (24 x 18 m factory)
+    height: 18
+    resolution: 0.05
+    robot_radius: 0.45
+    always_send_full_costmap: true
+    plugins: ["negative_obstacle_layer", "inflation_layer"]
+
+    negative_obstacle_layer:
+      plugin: "negative_obstacle_costmap_plugin::NegativeObstacleLayer"
+      enabled: true
+      hazards_topic: "/negative_obstacle/hazards"
+
+    inflation_layer:
+      plugin: "nav2_costmap_2d::InflationLayer"
+      enabled: true
+      inflation_radius: 0.55
+      cost_scaling_factor: 3.0
