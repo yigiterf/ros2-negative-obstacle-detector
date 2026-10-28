@@ -14,25 +14,29 @@ find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(rclcpp_lifecycle REQUIRED)
 find_package(sensor_msgs REQUIRED)
+find_package(visualization_msgs REQUIRED)
 find_package(pcl_conversions REQUIRED)
 find_package(tf2_ros REQUIRED)
 find_package(tf2_eigen REQUIRED)
-find_package(PCL 1.14 REQUIRED COMPONENTS common filters)
+find_package(tf2_sensor_msgs REQUIRED)
+find_package(PCL 1.14 REQUIRED COMPONENTS common filters segmentation)
 
-add_library(cloud_preprocessor
+add_library(negative_obstacle_detector_core
   src/cloud_preprocessor.cpp
+  src/ground_segmenter.cpp
+  src/negative_obstacle_extractor.cpp
 )
-target_include_directories(cloud_preprocessor PUBLIC
+target_include_directories(negative_obstacle_detector_core PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>
 )
-target_link_libraries(cloud_preprocessor PUBLIC
+target_link_libraries(negative_obstacle_detector_core PUBLIC
   ${PCL_LIBRARIES}
 )
-target_include_directories(cloud_preprocessor SYSTEM PUBLIC
+target_include_directories(negative_obstacle_detector_core SYSTEM PUBLIC
   ${PCL_INCLUDE_DIRS}
 )
-target_compile_definitions(cloud_preprocessor PUBLIC
+target_compile_definitions(negative_obstacle_detector_core PUBLIC
   ${PCL_DEFINITIONS}
 )
 
@@ -41,13 +45,16 @@ add_executable(negative_obstacle_detector_node
   src/main.cpp
 )
 target_link_libraries(negative_obstacle_detector_node
-  cloud_preprocessor
+  negative_obstacle_detector_core
 )
 ament_target_dependencies(negative_obstacle_detector_node
   rclcpp
   rclcpp_lifecycle
   sensor_msgs
+  visualization_msgs
   pcl_conversions
+  tf2_ros
+  tf2_sensor_msgs
 )
 
 install(
@@ -55,7 +62,7 @@ install(
   DESTINATION share/${PROJECT_NAME}
 )
 install(
-  TARGETS cloud_preprocessor negative_obstacle_detector_node
+  TARGETS negative_obstacle_detector_core negative_obstacle_detector_node
   EXPORT ${PROJECT_NAME}_export
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
@@ -65,7 +72,7 @@ install(
 
 ament_export_targets(${PROJECT_NAME}_export HAS_LIBRARY_TARGET)
 ament_export_dependencies(
-  rclcpp rclcpp_lifecycle sensor_msgs pcl_conversions tf2_ros tf2_eigen
+  rclcpp rclcpp_lifecycle sensor_msgs visualization_msgs pcl_conversions tf2_ros tf2_eigen tf2_sensor_msgs
 )
 
 if(BUILD_TESTING)

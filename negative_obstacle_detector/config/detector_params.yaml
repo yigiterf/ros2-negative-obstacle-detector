@@ -1,13 +1,20 @@
 # Parameters for the negative-obstacle detector node.
 #
-# The preprocessor crops and downsamples the input cloud in its source frame.
-# The vertical band (min_height / max_height) becomes gravity-aligned once the
-# cloud is transformed to base_link (Phase 3).
+# The pipeline transforms the input cloud to `target_frame` (a gravity-aligned
+# frame), preprocesses it, estimates the ground plane with RANSAC, and extracts
+# negative and elevated obstacles.
 
 negative_obstacle_detector:
   ros__parameters:
     input_topic: "/depth_camera/points"
+    target_frame: "base_link"
+
     output_topic: "/negative_obstacle/preprocessed"
+    ground_topic: "/negative_obstacle/ground"
+    negative_topic: "/negative_obstacle/negative"
+    elevated_topic: "/negative_obstacle/elevated"
+    hazards_topic: "/negative_obstacle/hazards"
+    markers_topic: "/negative_obstacle/markers"
 
     preprocessor:
       min_range: 0.4
@@ -16,3 +23,15 @@ negative_obstacle_detector:
       max_height: 1.2
       half_width: 3.0
       voxel_leaf_size: 0.02
+
+    ground:
+      distance_threshold: 0.03
+      angle_tolerance: 0.26
+      max_iterations: 200
+
+    negative_obstacle:
+      min_depth: 0.05
+      overhang_min_height: 0.05
+      overhang_max_height: 1.20
+      cluster_tolerance: 0.05
+      min_cluster_size: 8
