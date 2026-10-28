@@ -14,9 +14,9 @@
 
 #include "negative_obstacle_detector/negative_obstacle_extractor.hpp"
 
-#include <vector>
-
 #include <pcl/segmentation/extract_clusters.h>
+
+#include <vector>
 
 namespace negative_obstacle_detector
 {
@@ -42,11 +42,12 @@ void NegativeObstacleExtractor::extract(
 
   for (const auto & point : non_ground->points) {
     const float dist = plane.signed_distance(point);
+    const bool is_elevated =
+      dist > params_.overhang_min_height &&
+      dist < params_.overhang_max_height;
     if (dist < -params_.min_depth) {
       below->push_back(point);
-    } else if (dist > params_.overhang_min_height &&
-               dist < params_.overhang_max_height)
-    {
+    } else if (is_elevated) {
       above->push_back(point);
     }
   }

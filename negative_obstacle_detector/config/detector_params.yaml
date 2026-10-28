@@ -35,3 +35,12 @@ negative_obstacle_detector:
       overhang_max_height: 1.20
       cluster_tolerance: 0.05
       min_cluster_size: 8
+
+    free_space:
+      angle_bin_size: 1.0
+      gap_threshold: 0.3
+      min_range: 0.4
+      max_range: 6.0
+      sensor_x: 0.25
+      sensor_y: 0.0
+      sensor_z: 0.30

@@ -14,10 +14,10 @@
 
 #include "negative_obstacle_detector/ground_segmenter.hpp"
 
+#include <pcl/filters/extract_indices.h>
+
 #include <cmath>
 #include <vector>
-
-#include <pcl/filters/extract_indices.h>
 
 namespace negative_obstacle_detector
 {
@@ -70,6 +70,17 @@ bool GroundSegmenter::segment(
   plane_.c = c / norm;
   plane_.d = d / norm;
   plane_.valid = true;
+
+  // RANSAC's eigen decomposition returns an arbitrary normal sign. Orient the
+  // normal to point up (+z) so that signed_distance() is negative below the
+  // plane, which the negative-obstacle extractor and the free-space detector
+  // both rely on.
+  if (plane_.c < 0.0F) {
+    plane_.a = -plane_.a;
+    plane_.b = -plane_.b;
+    plane_.c = -plane_.c;
+    plane_.d = -plane_.d;
+  }
 
   // A "ground" plane must be dominated by a vertical normal; reject degenerate
   // near-vertical fits that RANSAC occasionally returns.

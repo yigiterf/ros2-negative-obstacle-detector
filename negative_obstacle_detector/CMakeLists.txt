@@ -25,6 +25,7 @@ add_library(negative_obstacle_detector_core
   src/cloud_preprocessor.cpp
   src/ground_segmenter.cpp
   src/negative_obstacle_extractor.cpp
+  src/free_space_detector.cpp
 )
 target_include_directories(negative_obstacle_detector_core PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
@@ -76,8 +77,25 @@ ament_export_dependencies(
 )
 
 if(BUILD_TESTING)
+  find_package(ament_cmake_gtest REQUIRED)
   find_package(ament_lint_auto REQUIRED)
   ament_lint_auto_find_test_dependencies()
+
+  ament_add_gtest(test_cloud_preprocessor
+    test/test_cloud_preprocessor.cpp)
+  target_link_libraries(test_cloud_preprocessor negative_obstacle_detector_core)
+
+  ament_add_gtest(test_ground_segmenter
+    test/test_ground_segmenter.cpp)
+  target_link_libraries(test_ground_segmenter negative_obstacle_detector_core)
+
+  ament_add_gtest(test_negative_obstacle_extractor
+    test/test_negative_obstacle_extractor.cpp)
+  target_link_libraries(test_negative_obstacle_extractor negative_obstacle_detector_core)
+
+  ament_add_gtest(test_free_space_detector
+    test/test_free_space_detector.cpp)
+  target_link_libraries(test_free_space_detector negative_obstacle_detector_core)
 endif()
 
 ament_package()

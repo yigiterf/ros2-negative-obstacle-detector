@@ -74,7 +74,7 @@ public:
     pcl::PointCloud<PointT> & non_ground);
 
   /// The last estimated ground plane.
-  const GroundPlane & plane() const { return plane_; }
+  const GroundPlane & plane() const {return plane_;}
 
 private:
   GroundSegmenterParams params_;

@@ -15,17 +15,19 @@
 #ifndef NEGATIVE_OBSTACLE_DETECTOR__DETECTOR_NODE_HPP_
 #define NEGATIVE_OBSTACLE_DETECTOR__DETECTOR_NODE_HPP_
 
+#include <pcl/point_cloud.h>
+#include <tf2_ros/buffer.h>
+#include <tf2_ros/transform_listener.h>
+
 #include <memory>
 #include <string>
 
-#include <pcl/point_cloud.h>
 #include <rclcpp_lifecycle/lifecycle_node.hpp>
 #include <sensor_msgs/msg/point_cloud2.hpp>
-#include <tf2_ros/buffer.h>
-#include <tf2_ros/transform_listener.h>
 #include <visualization_msgs/msg/marker_array.hpp>
 
 #include "negative_obstacle_detector/cloud_preprocessor.hpp"
+#include "negative_obstacle_detector/free_space_detector.hpp"
 #include "negative_obstacle_detector/ground_segmenter.hpp"
 #include "negative_obstacle_detector/negative_obstacle_extractor.hpp"
 
@@ -66,6 +68,7 @@ private:
   std::unique_ptr<CloudPreprocessor> preprocessor_;
   std::unique_ptr<GroundSegmenter> ground_segmenter_;
   std::unique_ptr<NegativeObstacleExtractor> extractor_;
+  std::unique_ptr<FreeSpaceDetector> free_space_detector_;
 
   tf2_ros::Buffer tf_buffer_;
   tf2_ros::TransformListener tf_listener_;
@@ -91,6 +94,7 @@ private:
   pcl::PointCloud<PointT>::Ptr non_ground_cloud_;
   pcl::PointCloud<PointT>::Ptr negative_cloud_;
   pcl::PointCloud<PointT>::Ptr elevated_cloud_;
+  pcl::PointCloud<PointT>::Ptr leading_edges_;
   pcl::PointCloud<PointT>::Ptr hazards_cloud_;
 };
 

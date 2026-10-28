@@ -14,10 +14,11 @@
 
 #include "negative_obstacle_detector/detector_node.hpp"
 
+#include <pcl_conversions/pcl_conversions.h>
+
 #include <chrono>
 #include <functional>
 
-#include <pcl_conversions/pcl_conversions.h>
 #include <std_msgs/msg/header.hpp>
 #include <tf2_sensor_msgs/tf2_sensor_msgs.hpp>
 #include <geometry_msgs/msg/point.hpp>
@@ -36,6 +37,7 @@ DetectorNode::DetectorNode(const rclcpp::NodeOptions & options)
   non_ground_cloud_(new pcl::PointCloud<PointT>()),
   negative_cloud_(new pcl::PointCloud<PointT>()),
   elevated_cloud_(new pcl::PointCloud<PointT>()),
+  leading_edges_(new pcl::PointCloud<PointT>()),
   hazards_cloud_(new pcl::PointCloud<PointT>())
 {
 }
@@ -88,9 +90,26 @@ DetectorNode::CallbackReturn DetectorNode::on_configure(
   extract_params.min_cluster_size =
     declare_parameter<int>("negative_obstacle.min_cluster_size", 8);
 
+  FreeSpaceDetectorParams free_space_params;
+  free_space_params.angle_bin_size =
+    declare_parameter<double>("free_space.angle_bin_size", 1.0);
+  free_space_params.gap_threshold =
+    declare_parameter<double>("free_space.gap_threshold", 0.3);
+  free_space_params.min_range =
+    declare_parameter<double>("free_space.min_range", 0.4);
+  free_space_params.max_range =
+    declare_parameter<double>("free_space.max_range", 6.0);
+  free_space_params.sensor_x =
+    declare_parameter<double>("free_space.sensor_x", 0.25);
+  free_space_params.sensor_y =
+    declare_parameter<double>("free_space.sensor_y", 0.0);
+  free_space_params.sensor_z =
+    declare_parameter<double>("free_space.sensor_z", 0.30);
+
   preprocessor_ = std::make_unique<CloudPreprocessor>(pre_params);
   ground_segmenter_ = std::make_unique<GroundSegmenter>(ground_params);
   extractor_ = std::make_unique<NegativeObstacleExtractor>(extract_params);
+  free_space_detector_ = std::make_unique<FreeSpaceDetector>(free_space_params);
 
   preprocessed_pub_ = create_publisher<sensor_msgs::msg::PointCloud2>(
     output_topic_, rclcpp::SensorDataQoS());
@@ -151,6 +170,7 @@ DetectorNode::CallbackReturn DetectorNode::on_cleanup(
   preprocessor_.reset();
   ground_segmenter_.reset();
   extractor_.reset();
+  free_space_detector_.reset();
   return CallbackReturn::SUCCESS;
 }
 
@@ -190,6 +210,11 @@ void DetectorNode::on_point_cloud(
   extractor_->extract(
     non_ground_cloud_, ground_segmenter_->plane(), *negative_cloud_, *elevated_cloud_);
 
+  // Leading-edge detection from gaps in ground coverage (the pit floor itself
+  // returns nothing, so the far wall is invisible from above).
+  free_space_detector_->detect(
+    ground_cloud_, ground_segmenter_->plane(), *leading_edges_);
+
   // Publish all stages.
   auto publish_cloud = [this](const pcl::PointCloud<PointT> & cloud,
     const rclcpp_lifecycle::LifecyclePublisher<sensor_msgs::msg::PointCloud2>::SharedPtr & pub,
@@ -207,11 +232,14 @@ void DetectorNode::on_point_cloud(
   publish_cloud(*negative_cloud_, negative_pub_, transformed.header);
   publish_cloud(*elevated_cloud_, elevated_pub_, transformed.header);
 
-  // Combined hazard cloud for the costmap layer (negative + elevated).
+  // Combined hazard cloud for the costmap layer (negative + elevated + leading
+  // edges).
   hazards_cloud_->clear();
-  hazards_cloud_->reserve(negative_cloud_->size() + elevated_cloud_->size());
+  hazards_cloud_->reserve(
+    negative_cloud_->size() + elevated_cloud_->size() + leading_edges_->size());
   *hazards_cloud_ += *negative_cloud_;
   *hazards_cloud_ += *elevated_cloud_;
+  *hazards_cloud_ += *leading_edges_;
   publish_cloud(*hazards_cloud_, hazards_pub_, transformed.header);
 
   // Visualization markers.
@@ -244,14 +272,15 @@ void DetectorNode::on_point_cloud(
     };
   add_points_marker(0, *negative_cloud_, 1.0F, 0.1F, 0.1F);
   add_points_marker(1, *elevated_cloud_, 1.0F, 0.6F, 0.1F);
+  add_points_marker(2, *leading_edges_, 0.1F, 0.7F, 1.0F);
   markers_pub_->publish(std::move(markers));
 
   const auto elapsed = std::chrono::duration_cast<std::chrono::microseconds>(
     std::chrono::steady_clock::now() - start).count();
   RCLCPP_DEBUG(get_logger(),
-    "ground=%zu non_ground=%zu negative=%zu elevated=%zu in %ld us",
+    "ground=%zu non_ground=%zu negative=%zu elevated=%zu leading_edges=%zu in %ld us",
     ground_cloud_->size(), non_ground_cloud_->size(),
-    negative_cloud_->size(), elevated_cloud_->size(), elapsed);
+    negative_cloud_->size(), elevated_cloud_->size(), leading_edges_->size(), elapsed);
 }
 
 }  // namespace negative_obstacle_detector
