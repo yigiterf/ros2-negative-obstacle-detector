@@ -49,17 +49,20 @@ def generate_launch_description():
                 'launch', 'simulation.launch.py'])]),
         launch_arguments={'headless': headless}.items())
 
-    # Static demo: map -> odom -> base_footprint are fixed identity transforms.
-    # (Full dynamic odometry via the DiffDrive bridge requires a
-    # robot_localization EKF because Gazebo scopes its TF frame names.)
+    # Static demo: map -> odom is fixed. The odom -> base_footprint transform is
+    # republished dynamically by the odom_to_tf node (from the bridged DiffDrive
+    # odometry), so the costmap tracks the robot while it moves.
     map_to_odom = Node(
         package='tf2_ros', executable='static_transform_publisher',
         name='map_to_odom',
         arguments=['0', '0', '0', '0', '0', '0', 'map', 'odom'])
-    odom_to_base = Node(
-        package='tf2_ros', executable='static_transform_publisher',
-        name='odom_to_base_footprint',
-        arguments=['0', '0', '0', '0', '0', '0', 'odom', 'base_footprint'])
+
+    odom_to_tf = Node(
+        package='negative_obstacle_bringup',
+        executable='odom_to_tf.py',
+        name='odom_to_tf',
+        parameters=[{'use_sim_time': True}],
+        output='screen')
 
     detector = Node(
         package='negative_obstacle_detector',
@@ -91,7 +94,7 @@ def generate_launch_description():
         declare_headless,
         simulation,
         map_to_odom,
-        odom_to_base,
+        odom_to_tf,
         detector,
         costmap,
         lifecycle,
