@@ -37,6 +37,7 @@ def generate_launch_description():
     nav2_params = os.path.join(bringup_share, 'config', 'nav2_params.yaml')
     detector_params = os.path.join(det_share, 'config', 'detector_params.yaml')
     map_yaml = os.path.join(bringup_share, 'maps', 'map.yaml')
+    fastdds_profile = os.path.join(bringup_share, 'config', 'fastdds_udp_only.xml')
     rviz_config = os.path.join(bringup_share, 'rviz', 'negative_obstacle.rviz')
 
     headless = LaunchConfiguration('headless')
@@ -80,6 +81,7 @@ def generate_launch_description():
             'use_sim_time': 'True',
             'autostart': 'True',
             'slam': 'False',
+            'use_composition': 'False',
         }.items())
 
     rviz = Node(
@@ -87,7 +89,13 @@ def generate_launch_description():
         arguments=['-d', rviz_config], output='screen')
 
     return LaunchDescription([
+        # Isolate this stack from any other ROS 2 graph on the machine (e.g. a
+        # second robot project) so topics such as /tf, /map and /scan do not
+        # collide. Use the same ROS_DOMAIN_ID for RViz and teleop.
+        SetEnvironmentVariable(name='ROS_DOMAIN_ID', value='42'),
         SetEnvironmentVariable(name='GZ_IP', value='127.0.0.1'),
+        SetEnvironmentVariable(name='GZ_PARTITION', value='negative_obstacle'),
+        SetEnvironmentVariable(name='FASTRTPS_DEFAULT_PROFILES_FILE', value=fastdds_profile),
         declare_headless,
         simulation,
         odom_to_tf,

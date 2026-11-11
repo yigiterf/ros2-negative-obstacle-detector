@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  FastDDS profile that disables the shared-memory transport and uses only UDP.
+  With ~20 nodes (full Nav2 stack) the SHM transport fails to open its fixed
+  ports ("Failed init_port fastrtps_port7000"), which breaks discovery of
+  transient-local topics such as /robot_description and /tf_static.
+-->
+<dds>
+  <profiles xmlns="http://www.eprosima.com/XMLSchemas/fastRTPS_Profiles">
+    <transport_descriptors>
+      <transport_descriptor>
+        <transport_id>custom_udp</transport_id>
+        <type>UDPv4</type>
+      </transport_descriptor>
+    </transport_descriptors>
+
+    <participant profile_name="udp_only_profile" is_default_profile="true">
+      <rtps>
+        <userTransports>
+          <transport_id>custom_udp</transport_id>
+        </userTransports>
+        <useBuiltinTransports>false</useBuiltinTransports>
+      </rtps>
+    </participant>
+  </profiles>
+</dds>
