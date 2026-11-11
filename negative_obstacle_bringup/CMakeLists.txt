@@ -4,7 +4,7 @@ project(negative_obstacle_bringup NONE)
 find_package(ament_cmake REQUIRED)
 
 install(
-  DIRECTORY launch config rviz
+  DIRECTORY launch config rviz maps
   DESTINATION share/${PROJECT_NAME}
 )
 

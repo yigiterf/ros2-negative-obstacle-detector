@@ -36,6 +36,7 @@ def generate_launch_description():
 
     nav2_params = os.path.join(bringup_share, 'config', 'nav2_params.yaml')
     detector_params = os.path.join(det_share, 'config', 'detector_params.yaml')
+    map_yaml = os.path.join(bringup_share, 'maps', 'map.yaml')
     rviz_config = os.path.join(bringup_share, 'rviz', 'negative_obstacle.rviz')
 
     headless = LaunchConfiguration('headless')
@@ -49,14 +50,9 @@ def generate_launch_description():
                 'launch', 'simulation.launch.py'])]),
         launch_arguments={'headless': headless}.items())
 
-    # Static demo: map -> odom is fixed. The odom -> base_footprint transform is
-    # republished dynamically by the odom_to_tf node (from the bridged DiffDrive
-    # odometry), so the costmap tracks the robot while it moves.
-    map_to_odom = Node(
-        package='tf2_ros', executable='static_transform_publisher',
-        name='map_to_odom',
-        arguments=['0', '0', '0', '0', '0', '0', 'map', 'odom'])
-
+    # odom -> base_footprint is republished by the odom_to_tf node (from the
+    # bridged DiffDrive odometry). map -> odom is published by AMCL once it
+    # localizes, so the costmaps and planner track the robot.
     odom_to_tf = Node(
         package='negative_obstacle_bringup',
         executable='odom_to_tf.py',
@@ -71,19 +67,20 @@ def generate_launch_description():
         parameters=[detector_params],
         output='screen')
 
-    costmap = Node(
-        package='nav2_costmap_2d',
-        executable='nav2_costmap_2d',
-        name='costmap',
-        parameters=[nav2_params],
-        output='screen')
-
-    # The costmap node is a managed (lifecycle) node; drive it to active.
-    lifecycle = ExecuteProcess(
-        cmd=['bash', '-c',
-             'sleep 6 && ros2 lifecycle set /costmap configure && '
-             'sleep 2 && ros2 lifecycle set /costmap activate'],
-        output='screen')
+    # Full Nav2 stack: map server, AMCL, NavFn planner, RPP controller,
+    # behavior-tree navigator and the lifecycle manager.
+    navigation = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource([
+            PathJoinSubstitution([
+                FindPackageShare('nav2_bringup'),
+                'launch', 'bringup_launch.py'])]),
+        launch_arguments={
+            'map': map_yaml,
+            'params_file': nav2_params,
+            'use_sim_time': 'True',
+            'autostart': 'True',
+            'slam': 'False',
+        }.items())
 
     rviz = Node(
         package='rviz2', executable='rviz2', name='rviz2',
@@ -93,10 +90,8 @@ def generate_launch_description():
         SetEnvironmentVariable(name='GZ_IP', value='127.0.0.1'),
         declare_headless,
         simulation,
-        map_to_odom,
         odom_to_tf,
         detector,
-        costmap,
-        lifecycle,
+        navigation,
         rviz,
     ])

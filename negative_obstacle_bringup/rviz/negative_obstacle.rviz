@@ -14,17 +14,21 @@ Visualization Manager:
       Description Topic:
         Value: /robot_description
     - Class: rviz_default_plugins/Map
-      Name: Costmap
+      Name: LocalCostmap
       Topic:
-        Value: /costmap
+        Value: /local_costmap/costmap
       Color Scheme: costmap
-    - Class: rviz_default_plugins/PointCloud2
-      Name: InputCloud
+    - Class: rviz_default_plugins/Map
+      Name: GlobalCostmap
       Topic:
-        Value: /depth_camera/points
-      Style: Points
-      Color Transformer: FlatColor
-      Color: 200; 200; 200
+        Value: /global_costmap/costmap
+      Color Scheme: map
+      Alpha: 0.7
+    - Class: rviz_default_plugins/Path
+      Name: Plan
+      Topic:
+        Value: /plan
+      Color: 0; 200; 255
     - Class: rviz_default_plugins/PointCloud2
       Name: NegativeObstacles
       Topic:
@@ -54,4 +58,8 @@ Visualization Manager:
     - Class: rviz_default_plugins/Select
     - Class: rviz_default_plugins/MoveCamera
     - Class: rviz_default_plugins/SetInitialPose
-    - Class: rviz_default_plugins/SetGoal
+      Topic:
+        Value: /initialpose
+    - Class: nav2_rviz_plugins/GoalTool
+      Topic:
+        Value: /goal_pose
